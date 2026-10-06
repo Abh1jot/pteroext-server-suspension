@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@pterodactyl/sdk';
 
 interface ServerItem {
     id: number;
     identifier: string;
+    uuid: string;
     name: string;
     node: string;
     node_id: number;
@@ -32,6 +33,99 @@ interface OverviewData {
     };
     servers: ServerItem[];
     nodes: NodeItem[];
+}
+
+interface TimeLeftInfo {
+    hasDate: boolean;
+    formattedDate: string;
+    formattedTimeLeft: string;
+    daysLeft: number;
+    hoursLeft: number;
+    minutesLeft: number;
+    isPastDue: boolean;
+    percent: number;
+    urgency: 'good' | 'warning' | 'critical';
+}
+
+function computeTimeLeft(dateStr: string | null): TimeLeftInfo {
+    if (!dateStr) {
+        return {
+            hasDate: false,
+            formattedDate: 'None',
+            formattedTimeLeft: 'No date set',
+            daysLeft: 0,
+            hoursLeft: 0,
+            minutesLeft: 0,
+            isPastDue: false,
+            percent: 100,
+            urgency: 'good',
+        };
+    }
+
+    const target = new Date(dateStr);
+    const targetMs = target.getTime();
+    const now = Date.now();
+    const diffMs = targetMs - now;
+
+    const formattedDate = target.toLocaleDateString(undefined, {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+    }) + ' ' + target.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    if (diffMs <= 0) {
+        return {
+            hasDate: true,
+            formattedDate,
+            formattedTimeLeft: 'Past due (Pending)',
+            daysLeft: 0,
+            hoursLeft: 0,
+            minutesLeft: 0,
+            isPastDue: true,
+            percent: 0,
+            urgency: 'critical',
+        };
+    }
+
+    const totalMinutes = Math.floor(diffMs / (1000 * 60));
+    const totalHours = Math.floor(totalMinutes / 60);
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+    const minutes = totalMinutes % 60;
+
+    let formattedTimeLeft = '';
+    if (days > 0) {
+        formattedTimeLeft = `${days}d ${hours}h left`;
+    } else if (hours > 0) {
+        formattedTimeLeft = `${hours}h ${minutes}m left`;
+    } else {
+        formattedTimeLeft = `${Math.max(1, minutes)}m left`;
+    }
+
+    let urgency: 'good' | 'warning' | 'critical' = 'good';
+    if (days < 1) {
+        urgency = 'critical';
+    } else if (days < 7) {
+        urgency = 'warning';
+    } else {
+        urgency = 'good';
+    }
+
+    // Relative progress bar based on 30-day baseline (scale 6% to 100%)
+    const maxMs = 30 * 24 * 60 * 60 * 1000;
+    const percent = Math.min(100, Math.max(6, Math.round((diffMs / maxMs) * 100)));
+
+    return {
+        hasDate: true,
+        formattedDate,
+        formattedTimeLeft,
+        daysLeft: days,
+        hoursLeft: hours,
+        minutesLeft: minutes,
+        isPastDue: false,
+        percent,
+        urgency,
+    };
 }
 
 export default function SuspensionScreen() {
@@ -62,10 +156,24 @@ export default function SuspensionScreen() {
         queryKey: ['admin-suspension-overview'],
         queryFn: async () => {
             const res = await fetch('/api/admin/extensions/server-suspension/overview');
-            if (!res.ok) throw new Error('Failed to load server suspension overview');
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.error || 'Failed to load server suspension overview');
+            }
             return res.json();
         },
+        staleTime: 5000,
+        refetchOnWindowFocus: true,
     });
+
+    const servers = overviewQuery.data?.servers || [];
+
+    // Automatically set default server when servers load
+    useEffect(() => {
+        if (!selectedServerId && servers.length > 0) {
+            setSelectedServerId(servers[0].id);
+        }
+    }, [servers, selectedServerId]);
 
     const updateScheduleMutation = useMutation({
         mutationFn: async (payload: { server_id: number; suspension_date: string | null; termination_date: string | null; notify_user: boolean; notes: string }) => {
@@ -141,27 +249,43 @@ export default function SuspensionScreen() {
         onError: (err: any) => toast.error(err.message),
     });
 
-    const servers = overviewQuery.data?.servers || [];
-
     const openEdit = (server: ServerItem) => {
         setSelectedServerId(server.id);
         setEditSuspDate(server.suspension_date ? server.suspension_date.slice(0, 16) : '');
         setEditTermDate(server.termination_date ? server.termination_date.slice(0, 16) : '');
         setEditNotify(server.notify_user);
         setEditNotes(server.notes || '');
+        setServerFilterQuery('');
         setSingleModalOpen(true);
     };
 
     const openScheduleNew = () => {
-        if (!selectedServerId && servers.length > 0) {
-            const first = servers[0];
-            setSelectedServerId(first.id);
-            setEditSuspDate(first.suspension_date ? first.suspension_date.slice(0, 16) : '');
-            setEditTermDate(first.termination_date ? first.termination_date.slice(0, 16) : '');
-            setEditNotify(first.notify_user);
-            setEditNotes(first.notes || '');
+        setServerFilterQuery('');
+        const targetServer = (selectedServerId && servers.find((s) => s.id === selectedServerId)) || servers[0];
+        if (targetServer) {
+            setSelectedServerId(targetServer.id);
+            setEditSuspDate(targetServer.suspension_date ? targetServer.suspension_date.slice(0, 16) : '');
+            setEditTermDate(targetServer.termination_date ? targetServer.termination_date.slice(0, 16) : '');
+            setEditNotify(targetServer.notify_user);
+            setEditNotes(targetServer.notes || '');
+        } else {
+            setEditSuspDate('');
+            setEditTermDate('');
+            setEditNotify(true);
+            setEditNotes('');
         }
         setSingleModalOpen(true);
+    };
+
+    const selectTargetServerInModal = (id: number) => {
+        setSelectedServerId(id);
+        const target = servers.find((s) => s.id === id);
+        if (target) {
+            setEditSuspDate(target.suspension_date ? target.suspension_date.slice(0, 16) : '');
+            setEditTermDate(target.termination_date ? target.termination_date.slice(0, 16) : '');
+            setEditNotify(target.notify_user);
+            setEditNotes(target.notes || '');
+        }
     };
 
     const setSuspensionDays = (days: number) => {
@@ -211,6 +335,21 @@ export default function SuspensionScreen() {
         }
     };
 
+    const modalFilteredServers = servers.filter((s) => {
+        if (!serverFilterQuery.trim()) return true;
+        const q = serverFilterQuery.toLowerCase();
+        return (
+            s.name.toLowerCase().includes(q) ||
+            s.identifier.toLowerCase().includes(q) ||
+            s.owner.toLowerCase().includes(q) ||
+            s.owner_email.toLowerCase().includes(q)
+        );
+    });
+
+    const activeModalServer = servers.find((s) => s.id === selectedServerId);
+    const modalPreviewTime = computeTimeLeft(editSuspDate || null);
+    const modalPreviewTerm = computeTimeLeft(editTermDate || null);
+
     return (
         <div className="pe-container">
             {/* Header */}
@@ -222,7 +361,7 @@ export default function SuspensionScreen() {
                     </p>
                 </div>
 
-                <div style={{ display: 'flex', gap: 10 }}>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                     <button
                         type="button"
                         className="pe-btn pe-btn-primary"
@@ -296,7 +435,7 @@ export default function SuspensionScreen() {
                     onChange={(e) => setNodeFilter(e.target.value)}
                 >
                     <option value="all">All Nodes</option>
-                    {overviewQuery.data?.nodes.map((n) => (
+                    {overviewQuery.data?.nodes?.map((n) => (
                         <option key={n.id} value={n.id}>
                             {n.name}
                         </option>
@@ -330,29 +469,31 @@ export default function SuspensionScreen() {
                             <th>Server</th>
                             <th>Node / Owner</th>
                             <th>Status</th>
-                            <th>Suspension Due</th>
-                            <th>Termination Due</th>
+                            <th style={{ minWidth: 220 }}>Suspension Date & Time Left</th>
+                            <th style={{ minWidth: 200 }}>Termination Grace</th>
                             <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {overviewQuery.isLoading ? (
                             <tr>
-                                <td colSpan={7} style={{ textAlign: 'center', padding: '32px 0' }}>
+                                <td colSpan={7} style={{ textAlign: 'center', padding: '36px 0' }}>
                                     <span className="pe-spinner" />
-                                    <p className="pe-subtitle" style={{ marginTop: 8 }}>Loading servers...</p>
+                                    <p className="pe-subtitle" style={{ marginTop: 8 }}>Loading panel servers...</p>
                                 </td>
                             </tr>
                         ) : filteredServers.length === 0 ? (
                             <tr>
-                                <td colSpan={7} style={{ textAlign: 'center', padding: '32px 0' }}>
-                                    <p className="pe-subtitle">No matching servers found.</p>
+                                <td colSpan={7} style={{ textAlign: 'center', padding: '36px 0' }}>
+                                    <p className="pe-subtitle">No matching servers found on panel.</p>
                                 </td>
                             </tr>
                         ) : (
                             filteredServers.map((server) => {
                                 const isSuspended = server.server_status === 'suspended';
                                 const hasSchedule = Boolean(server.suspension_date);
+                                const suspTimeInfo = computeTimeLeft(server.suspension_date);
+                                const termTimeInfo = computeTimeLeft(server.termination_date);
 
                                 return (
                                     <tr key={server.id}>
@@ -393,24 +534,59 @@ export default function SuspensionScreen() {
                                                 </span>
                                             )}
                                         </td>
+
+                                        {/* Suspension Date & Time Left Progress Bar */}
                                         <td>
-                                            {server.suspension_date ? (
-                                                <span style={{ fontSize: '0.8125rem', color: '#facc15' }}>
-                                                    {new Date(server.suspension_date).toLocaleDateString()} {new Date(server.suspension_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                </span>
+                                            {suspTimeInfo.hasDate ? (
+                                                <div className="pe-time-cell">
+                                                    <div className="pe-time-header">
+                                                        <span className="pe-time-date">{suspTimeInfo.formattedDate}</span>
+                                                        <span className={`pe-time-chip pe-time-chip-${suspTimeInfo.urgency}`}>
+                                                            {suspTimeInfo.formattedTimeLeft}
+                                                        </span>
+                                                    </div>
+                                                    <div
+                                                        className="pe-progress-track"
+                                                        title={`Suspension due: ${suspTimeInfo.formattedDate} (${suspTimeInfo.formattedTimeLeft})`}
+                                                    >
+                                                        <div
+                                                            className={`pe-progress-fill pe-progress-fill-${suspTimeInfo.urgency}`}
+                                                            style={{ width: `${suspTimeInfo.percent}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
                                             ) : (
-                                                <span style={{ color: 'var(--muted-foreground, #64748b)' }}>None</span>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                                    <span className="pe-time-chip pe-time-chip-muted">No Expiration Set</span>
+                                                </div>
                                             )}
                                         </td>
+
+                                        {/* Permanent Termination Grace Period */}
                                         <td>
-                                            {server.termination_date ? (
-                                                <span style={{ fontSize: '0.8125rem', color: '#f87171' }}>
-                                                    {new Date(server.termination_date).toLocaleDateString()} {new Date(server.termination_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                </span>
+                                            {termTimeInfo.hasDate ? (
+                                                <div className="pe-time-cell">
+                                                    <div className="pe-time-header">
+                                                        <span className="pe-time-date" style={{ color: '#f87171' }}>{termTimeInfo.formattedDate}</span>
+                                                        <span className={`pe-time-chip pe-time-chip-${termTimeInfo.urgency}`}>
+                                                            {termTimeInfo.formattedTimeLeft}
+                                                        </span>
+                                                    </div>
+                                                    <div
+                                                        className="pe-progress-track"
+                                                        title={`Termination: ${termTimeInfo.formattedDate} (${termTimeInfo.formattedTimeLeft})`}
+                                                    >
+                                                        <div
+                                                            className={`pe-progress-fill pe-progress-fill-${termTimeInfo.urgency}`}
+                                                            style={{ width: `${termTimeInfo.percent}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
                                             ) : (
-                                                <span style={{ color: 'var(--muted-foreground, #64748b)' }}>None</span>
+                                                <span style={{ fontSize: '0.75rem', color: 'var(--muted-foreground, #64748b)' }}>None</span>
                                             )}
                                         </td>
+
                                         <td>
                                             <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
                                                 <button
@@ -482,7 +658,12 @@ export default function SuspensionScreen() {
 
                         {/* Step 1: Select Server with Search Filter */}
                         <div className="pe-form-group">
-                            <label className="pe-form-label">Select Target Server</label>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <label className="pe-form-label">Select Target Server</label>
+                                <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                                    {servers.length} servers available
+                                </span>
+                            </div>
                             <input
                                 type="text"
                                 className="pe-input"
@@ -495,31 +676,20 @@ export default function SuspensionScreen() {
                                 className="pe-select"
                                 style={{ width: '100%' }}
                                 value={selectedServerId ?? ''}
-                                onChange={(e) => {
-                                    const id = Number(e.target.value);
-                                    setSelectedServerId(id);
-                                    const found = servers.find((s) => s.id === id);
-                                    if (found) {
-                                        setEditSuspDate(found.suspension_date ? found.suspension_date.slice(0, 16) : '');
-                                        setEditTermDate(found.termination_date ? found.termination_date.slice(0, 16) : '');
-                                        setEditNotify(found.notify_user);
-                                        setEditNotes(found.notes || '');
-                                    }
-                                }}
+                                onChange={(e) => selectTargetServerInModal(Number(e.target.value))}
                             >
-                                {servers.length === 0 && <option value="">No servers loaded</option>}
-                                {servers
-                                    .filter((s) =>
-                                        !serverFilterQuery ||
-                                        s.name.toLowerCase().includes(serverFilterQuery.toLowerCase()) ||
-                                        s.identifier.toLowerCase().includes(serverFilterQuery.toLowerCase()) ||
-                                        s.owner.toLowerCase().includes(serverFilterQuery.toLowerCase())
-                                    )
-                                    .map((s) => (
-                                        <option key={s.id} value={s.id}>
-                                            {s.name} ({s.identifier}) - {s.owner}
-                                        </option>
-                                    ))}
+                                {overviewQuery.isLoading && <option value="">Loading servers...</option>}
+                                {!overviewQuery.isLoading && servers.length === 0 && (
+                                    <option value="">No servers available on panel</option>
+                                )}
+                                {!overviewQuery.isLoading && servers.length > 0 && modalFilteredServers.length === 0 && (
+                                    <option value="">No servers matching filter</option>
+                                )}
+                                {modalFilteredServers.map((s) => (
+                                    <option key={s.id} value={s.id}>
+                                        {s.name} ({s.identifier}) - Owner: {s.owner}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
@@ -528,9 +698,11 @@ export default function SuspensionScreen() {
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                                 <label className="pe-form-label" style={{ marginBottom: 0 }}>Suspension Date & Time</label>
                                 <div style={{ display: 'flex', gap: 4 }}>
-                                    <button type="button" className="pe-btn pe-btn-secondary" style={{ padding: '2px 8px', fontSize: '0.72rem' }} onClick={() => setSuspensionDays(7)}>+7d</button>
-                                    <button type="button" className="pe-btn pe-btn-secondary" style={{ padding: '2px 8px', fontSize: '0.72rem' }} onClick={() => setSuspensionDays(14)}>+14d</button>
-                                    <button type="button" className="pe-btn pe-btn-secondary" style={{ padding: '2px 8px', fontSize: '0.72rem' }} onClick={() => setSuspensionDays(30)}>+30d</button>
+                                    <button type="button" className="pe-btn-preset" onClick={() => setSuspensionDays(3)}>+3d</button>
+                                    <button type="button" className="pe-btn-preset" onClick={() => setSuspensionDays(7)}>+7d</button>
+                                    <button type="button" className="pe-btn-preset" onClick={() => setSuspensionDays(14)}>+14d</button>
+                                    <button type="button" className="pe-btn-preset" onClick={() => setSuspensionDays(30)}>+30d</button>
+                                    <button type="button" className="pe-btn-preset" onClick={() => setSuspensionDays(60)}>+60d</button>
                                 </div>
                             </div>
                             <input
@@ -546,8 +718,10 @@ export default function SuspensionScreen() {
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                                 <label className="pe-form-label" style={{ marginBottom: 0 }}>Permanent Termination Date (Optional)</label>
                                 <div style={{ display: 'flex', gap: 4 }}>
-                                    <button type="button" className="pe-btn pe-btn-secondary" style={{ padding: '2px 8px', fontSize: '0.72rem' }} onClick={() => setTerminationGrace(3)}>+3d Grace</button>
-                                    <button type="button" className="pe-btn pe-btn-secondary" style={{ padding: '2px 8px', fontSize: '0.72rem' }} onClick={() => setTerminationGrace(7)}>+7d Grace</button>
+                                    <button type="button" className="pe-btn-preset" onClick={() => setTerminationGrace(3)}>+3d Grace</button>
+                                    <button type="button" className="pe-btn-preset" onClick={() => setTerminationGrace(7)}>+7d Grace</button>
+                                    <button type="button" className="pe-btn-preset" onClick={() => setTerminationGrace(14)}>+14d Grace</button>
+                                    <button type="button" className="pe-btn-preset" onClick={() => setEditTermDate('')}>Clear</button>
                                 </div>
                             </div>
                             <input
@@ -557,6 +731,38 @@ export default function SuspensionScreen() {
                                 onChange={(e) => setEditTermDate(e.target.value)}
                             />
                         </div>
+
+                        {/* Live Suspension Countdown & Progress Bar Preview */}
+                        {editSuspDate && (
+                            <div className="pe-preview-card">
+                                <div className="pe-preview-title">Schedule Timeline & Countdown</div>
+                                <div className="pe-preview-row">
+                                    <div>
+                                        <span style={{ fontSize: '0.84rem', fontWeight: 600, color: '#ffffff' }}>
+                                            {activeModalServer ? activeModalServer.name : 'Selected Server'}
+                                        </span>
+                                        <span style={{ fontSize: '0.72rem', color: '#94a3b8', marginLeft: 6 }}>
+                                            will suspend on {modalPreviewTime.formattedDate}
+                                        </span>
+                                    </div>
+                                    <span className={`pe-time-chip pe-time-chip-${modalPreviewTime.urgency}`}>
+                                        {modalPreviewTime.formattedTimeLeft}
+                                    </span>
+                                </div>
+                                <div className="pe-progress-track" title={modalPreviewTime.formattedTimeLeft}>
+                                    <div
+                                        className={`pe-progress-fill pe-progress-fill-${modalPreviewTime.urgency}`}
+                                        style={{ width: `${modalPreviewTime.percent}%` }}
+                                    />
+                                </div>
+                                {editTermDate && (
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginTop: 4, color: '#f87171' }}>
+                                        <span>Grace Period Termination: {modalPreviewTerm.formattedDate}</span>
+                                        <span>{modalPreviewTerm.formattedTimeLeft}</span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                         {/* Step 4: Notification toggle */}
                         <div className="pe-form-group">
@@ -583,7 +789,7 @@ export default function SuspensionScreen() {
                         </div>
 
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
-                            {selectedServerId && servers.find((s) => s.id === selectedServerId)?.suspension_date ? (
+                            {selectedServerId && activeModalServer?.suspension_date ? (
                                 <button
                                     type="button"
                                     className="pe-btn pe-btn-danger"
@@ -610,7 +816,7 @@ export default function SuspensionScreen() {
                                     disabled={updateScheduleMutation.isPending || !selectedServerId}
                                     onClick={() => {
                                         if (!selectedServerId) {
-                                            toast.error('Please select a server first');
+                                            toast.error('Please select a target server first');
                                             return;
                                         }
                                         updateScheduleMutation.mutate({

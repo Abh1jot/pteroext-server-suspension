@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Models\Node;
 use Pterodactyl\Facades\Daemon;
@@ -31,34 +32,43 @@ class SuspensionController extends Controller
                     $table->text('notes')->nullable();
                     $table->timestamps();
                 });
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+                Log::warning('ServerSuspension table creation note: ' . $e->getMessage());
+            }
         }
 
         $schedules = Schema::hasTable('ext_server_suspensions')
             ? DB::table('ext_server_suspensions')->get()->keyBy('server_id')
             : collect();
 
-        $servers = Server::query()
-            ->with(['user:id,username,email', 'node:id,name'])
-            ->get(['id', 'uuid', 'uuidShort', 'identifier', 'name', 'node_id', 'owner_id', 'status'])
-            ->map(function ($s) use ($schedules) {
-                $sched = $schedules->get($s->id);
-                return [
-                    'id' => $s->id,
-                    'identifier' => $s->identifier ?? $s->uuidShort,
-                    'name' => $s->name,
-                    'node' => $s->node?->name ?? 'Default Node',
-                    'node_id' => $s->node_id,
-                    'owner' => $s->user?->username ?? 'Unknown',
-                    'owner_email' => $s->user?->email ?? '',
-                    'server_status' => $s->status ?? 'active',
-                    'suspension_date' => $sched?->suspension_date,
-                    'termination_date' => $sched?->termination_date,
-                    'notify_user' => (bool) ($sched?->notify_user ?? true),
-                    'sched_status' => $sched?->status ?? 'active',
-                    'notes' => $sched?->notes ?? '',
-                ];
-            });
+        try {
+            $servers = Server::query()
+                ->with(['user:id,username,email', 'node:id,name'])
+                ->get()
+                ->map(function ($s) use ($schedules) {
+                    $sched = $schedules->get($s->id);
+                    $identifier = $s->uuidShort ?? substr((string) ($s->uuid ?? ''), 0, 8);
+                    return [
+                        'id' => $s->id,
+                        'identifier' => $identifier,
+                        'uuid' => $s->uuid,
+                        'name' => $s->name,
+                        'node' => $s->node?->name ?? 'Default Node',
+                        'node_id' => $s->node_id,
+                        'owner' => $s->user?->username ?? 'Unknown',
+                        'owner_email' => $s->user?->email ?? '',
+                        'server_status' => $s->status ?? 'active',
+                        'suspension_date' => $sched?->suspension_date,
+                        'termination_date' => $sched?->termination_date,
+                        'notify_user' => (bool) ($sched?->notify_user ?? true),
+                        'sched_status' => $sched?->status ?? 'active',
+                        'notes' => $sched?->notes ?? '',
+                    ];
+                });
+        } catch (\Throwable $e) {
+            Log::error('ServerSuspension getOverview query error: ' . $e->getMessage());
+            $servers = collect();
+        }
 
         $total = $servers->count();
         $scheduled = $servers->whereNotNull('suspension_date')->where('sched_status', 'active')->count();
@@ -106,11 +116,14 @@ class SuspensionController extends Controller
             } catch (\Throwable $e) {}
         }
 
+        $suspDate = !empty($validated['suspension_date']) ? date('Y-m-d H:i:s', strtotime($validated['suspension_date'])) : null;
+        $termDate = !empty($validated['termination_date']) ? date('Y-m-d H:i:s', strtotime($validated['termination_date'])) : null;
+
         DB::table('ext_server_suspensions')->updateOrInsert(
             ['server_id' => $validated['server_id']],
             [
-                'suspension_date' => $validated['suspension_date'] ? date('Y-m-d H:i:s', strtotime($validated['suspension_date'])) : null,
-                'termination_date' => $validated['termination_date'] ? date('Y-m-d H:i:s', strtotime($validated['termination_date'])) : null,
+                'suspension_date' => $suspDate,
+                'termination_date' => $termDate,
                 'notify_user' => $validated['notify_user'] ?? true,
                 'notes' => $validated['notes'] ?? '',
                 'status' => 'active',
