@@ -35,12 +35,12 @@ function computeTime(dateStr: string): TimeLeftInfo {
         day: '2-digit',
         month: 'short',
         year: 'numeric',
-    }) + ' at ' + target.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }) + ' • ' + target.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     if (diffMs <= 0) {
         return {
             formattedDate,
-            formattedTimeLeft: 'Past due / Pending suspension',
+            formattedTimeLeft: 'Past due (Pending)',
             daysLeft: 0,
             hoursLeft: 0,
             minutesLeft: 0,
@@ -58,11 +58,11 @@ function computeTime(dateStr: string): TimeLeftInfo {
 
     let formattedTimeLeft = '';
     if (days > 0) {
-        formattedTimeLeft = `${days} day${days > 1 ? 's' : ''}, ${hours} hr${hours !== 1 ? 's' : ''} left`;
+        formattedTimeLeft = `${days}d ${hours}h left`;
     } else if (hours > 0) {
-        formattedTimeLeft = `${hours} hr${hours !== 1 ? 's' : ''}, ${minutes} min remaining`;
+        formattedTimeLeft = `${hours}h ${minutes}m left`;
     } else {
-        formattedTimeLeft = `${Math.max(1, minutes)} min remaining`;
+        formattedTimeLeft = `${Math.max(1, minutes)}m left`;
     }
 
     let urgency: 'good' | 'warning' | 'critical' = 'good';
@@ -76,7 +76,7 @@ function computeTime(dateStr: string): TimeLeftInfo {
 
     // Baseline 30 days = 100%, 0 = 0%
     const maxMs = 30 * 24 * 60 * 60 * 1000;
-    const percent = Math.min(100, Math.max(5, Math.round((diffMs / maxMs) * 100)));
+    const percent = Math.min(100, Math.max(4, Math.round((diffMs / maxMs) * 100)));
 
     return {
         formattedDate,
@@ -100,10 +100,9 @@ export default function ServerSuspensionBanner() {
         if (match) serverIdentifier = match[1];
     }
 
-    const [collapsed, setCollapsed] = useState(false);
     const [, setTick] = useState(0);
 
-    // Live tick to keep countdown fresh every 30 seconds
+    // Refresh time calculations periodically without re-fetching
     useEffect(() => {
         const timer = setInterval(() => setTick((t) => t + 1), 30000);
         return () => clearInterval(timer);
@@ -141,98 +140,55 @@ export default function ServerSuspensionBanner() {
     const suspInfo = computeTime(data.suspension_date);
     const termInfo = data.termination_date ? computeTime(data.termination_date) : null;
 
-    if (collapsed) {
-        return (
-            <div className={`pe-console-banner-mini pe-console-banner-mini-${suspInfo.urgency}`}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span className="pe-pulse-dot" />
-                    <span style={{ fontWeight: 600, fontSize: '0.8125rem' }}>
-                        Suspension scheduled: {suspInfo.formattedDate}
-                    </span>
-                    <span className={`pe-time-chip pe-time-chip-${suspInfo.urgency}`}>
+    return (
+        <div className={`pe-slim-banner pe-slim-banner-${suspInfo.urgency}`}>
+            <div className="pe-slim-banner-body">
+                {/* Left side: Icon, Title, Date, Chip */}
+                <div className="pe-slim-banner-left">
+                    <svg
+                        className="pe-slim-icon"
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+
+                    <span className="pe-slim-title">Server Suspension:</span>
+                    <span className="pe-slim-date">{suspInfo.formattedDate}</span>
+                    <span className={`pe-slim-chip pe-slim-chip-${suspInfo.urgency}`}>
                         {suspInfo.formattedTimeLeft}
                     </span>
                 </div>
-                <button
-                    type="button"
-                    className="pe-banner-btn"
-                    onClick={() => setCollapsed(false)}
-                >
-                    Show Details
-                </button>
-            </div>
-        );
-    }
 
-    return (
-        <div className={`pe-console-banner pe-console-banner-${suspInfo.urgency}`}>
-            {/* Header */}
-            <div className="pe-console-banner-top">
-                <div className="pe-console-banner-title-wrap">
-                    <div className="pe-banner-icon-box">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10" />
-                            <polyline points="12 6 12 12 16 14" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div className="pe-banner-headline">
-                            <span>Scheduled Server Suspension</span>
-                            <span className={`pe-time-chip pe-time-chip-${suspInfo.urgency}`}>
-                                {suspInfo.formattedTimeLeft}
-                            </span>
-                        </div>
-                        <div className="pe-banner-subline">
-                            This server is scheduled to suspend on <strong>{suspInfo.formattedDate}</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <button
-                        type="button"
-                        className="pe-banner-btn"
-                        onClick={() => setCollapsed(true)}
-                        title="Minimize notice"
-                    >
-                        Minimize
-                    </button>
-                </div>
-            </div>
-
-            {/* Countdown Progress Bar */}
-            <div className="pe-console-progress-wrap">
-                <div className="pe-console-progress-track">
-                    <div
-                        className={`pe-console-progress-fill pe-console-progress-fill-${suspInfo.urgency}`}
-                        style={{ width: `${suspInfo.percent}%` }}
-                    />
-                </div>
-                <div className="pe-console-progress-legend">
-                    <span>Time remaining: {suspInfo.formattedTimeLeft}</span>
-                    <span>Suspension: {suspInfo.formattedDate}</span>
-                </div>
-            </div>
-
-            {/* Secondary info (Termination Grace & Admin Note) */}
-            {(termInfo || data.notes) && (
-                <div className="pe-console-banner-extra">
+                {/* Right side: Optional Grace Termination & Note */}
+                <div className="pe-slim-banner-right">
                     {termInfo && (
-                        <div className="pe-console-extra-item">
-                            <span className="pe-extra-label">Grace Period Termination:</span>
-                            <span className="pe-extra-val" style={{ color: '#f87171' }}>
-                                Permanent data deletion scheduled for {termInfo.formattedDate} ({termInfo.formattedTimeLeft})
-                            </span>
-                        </div>
+                        <span className="pe-slim-term-notice" title={`Permanent termination date: ${termInfo.formattedDate}`}>
+                            Termination: {termInfo.formattedDate.split('•')[0]} ({termInfo.formattedTimeLeft})
+                        </span>
                     )}
                     {data.notes && (
-                        <div className="pe-console-extra-item">
-                            <span className="pe-extra-label">Note:</span>
-                            <span className="pe-extra-val">{data.notes}</span>
-                        </div>
+                        <span className="pe-slim-note" title={data.notes}>
+                            {data.notes}
+                        </span>
                     )}
                 </div>
-            )}
+            </div>
+
+            {/* Ultra-thin 3px bottom progress indicator */}
+            <div className="pe-slim-track" title={`Suspension in ${suspInfo.formattedTimeLeft} (${suspInfo.formattedDate})`}>
+                <div
+                    className={`pe-slim-fill pe-slim-fill-${suspInfo.urgency}`}
+                    style={{ width: `${suspInfo.percent}%` }}
+                />
+            </div>
         </div>
     );
 }
