@@ -194,18 +194,31 @@ export default function SuspensionScreen() {
                 <div style={{ display: 'flex', gap: 10 }}>
                     <button
                         type="button"
+                        className="pe-btn pe-btn-primary"
+                        onClick={() => {
+                            if (servers.length > 0) {
+                                openEdit(servers[0]);
+                            } else {
+                                toast.error('No servers available');
+                            }
+                        }}
+                    >
+                        + Set Suspension Date
+                    </button>
+                    <button
+                        type="button"
+                        className="pe-btn pe-btn-secondary"
+                        onClick={() => setBulkModalOpen(true)}
+                    >
+                        Bulk Schedule {selectedServerIds.length > 0 ? `(${selectedServerIds.length})` : ''}
+                    </button>
+                    <button
+                        type="button"
                         className="pe-btn pe-btn-secondary"
                         disabled={processDueMutation.isPending}
                         onClick={() => processDueMutation.mutate()}
                     >
                         {processDueMutation.isPending ? <span className="pe-spinner" /> : 'Process Due Schedules'}
-                    </button>
-                    <button
-                        type="button"
-                        className="pe-btn pe-btn-primary"
-                        onClick={() => setBulkModalOpen(true)}
-                    >
-                        Bulk Schedule {selectedServerIds.length > 0 ? `(${selectedServerIds.length})` : ''}
                     </button>
                 </div>
             </div>
@@ -374,20 +387,31 @@ export default function SuspensionScreen() {
                                             )}
                                         </td>
                                         <td>
-                                            <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                                            <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
                                                 <button
                                                     type="button"
-                                                    className="pe-btn pe-btn-secondary"
-                                                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                                                    className="pe-btn pe-btn-primary"
+                                                    style={{ padding: '6px 12px', fontSize: '0.8125rem', fontWeight: 600 }}
                                                     onClick={() => openEdit(server)}
                                                 >
-                                                    Schedule
+                                                    {hasSchedule ? 'Edit Expiration' : 'Set Suspension Date'}
                                                 </button>
+                                                {hasSchedule && (
+                                                    <button
+                                                        type="button"
+                                                        className="pe-btn pe-btn-secondary"
+                                                        style={{ padding: '6px 10px', fontSize: '0.75rem' }}
+                                                        title="Remove scheduled suspension & termination"
+                                                        onClick={() => actionMutation.mutate({ server_id: server.id, action: 'cancel' })}
+                                                    >
+                                                        Remove Schedule
+                                                    </button>
+                                                )}
                                                 {isSuspended ? (
                                                     <button
                                                         type="button"
                                                         className="pe-btn pe-btn-secondary"
-                                                        style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                                                        style={{ padding: '6px 10px', fontSize: '0.75rem' }}
                                                         disabled={actionMutation.isPending}
                                                         onClick={() => actionMutation.mutate({ server_id: server.id, action: 'unsuspend' })}
                                                     >
@@ -397,11 +421,11 @@ export default function SuspensionScreen() {
                                                     <button
                                                         type="button"
                                                         className="pe-btn pe-btn-danger"
-                                                        style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                                                        style={{ padding: '6px 10px', fontSize: '0.75rem' }}
                                                         disabled={actionMutation.isPending}
                                                         onClick={() => actionMutation.mutate({ server_id: server.id, action: 'suspend' })}
                                                     >
-                                                        Suspend
+                                                        Suspend Now
                                                     </button>
                                                 )}
                                             </div>
@@ -429,6 +453,25 @@ export default function SuspensionScreen() {
                             >
                                 &times;
                             </button>
+                        </div>
+
+                        <div className="pe-form-group">
+                            <label className="pe-form-label">Target Server</label>
+                            <select
+                                className="pe-select"
+                                style={{ width: '100%' }}
+                                value={editServer.id}
+                                onChange={(e) => {
+                                    const found = servers.find((s) => s.id === Number(e.target.value));
+                                    if (found) openEdit(found);
+                                }}
+                            >
+                                {servers.map((s) => (
+                                    <option key={s.id} value={s.id}>
+                                        {s.name} ({s.identifier}) - {s.owner}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className="pe-form-group">
