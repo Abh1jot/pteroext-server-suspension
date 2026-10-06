@@ -41,7 +41,8 @@ export default function SuspensionScreen() {
     const [statusFilter, setStatusFilter] = useState('all');
 
     // Modals
-    const [editServer, setEditServer] = useState<ServerItem | null>(null);
+    const [singleModalOpen, setSingleModalOpen] = useState(false);
+    const [selectedServerId, setSelectedServerId] = useState<number | null>(null);
     const [bulkModalOpen, setBulkModalOpen] = useState(false);
 
     // Edit form states
@@ -49,6 +50,7 @@ export default function SuspensionScreen() {
     const [editTermDate, setEditTermDate] = useState('');
     const [editNotify, setEditNotify] = useState(true);
     const [editNotes, setEditNotes] = useState('');
+    const [serverFilterQuery, setServerFilterQuery] = useState('');
 
     // Bulk form states
     const [bulkSuspDate, setBulkSuspDate] = useState('');
@@ -78,7 +80,7 @@ export default function SuspensionScreen() {
         },
         onSuccess: (data) => {
             toast.success(data.message || 'Schedule updated');
-            setEditServer(null);
+            setSingleModalOpen(false);
             queryClient.invalidateQueries({ queryKey: ['admin-suspension-overview'] });
         },
         onError: (err: any) => toast.error(err.message),
@@ -139,15 +141,44 @@ export default function SuspensionScreen() {
         onError: (err: any) => toast.error(err.message),
     });
 
+    const servers = overviewQuery.data?.servers || [];
+
     const openEdit = (server: ServerItem) => {
-        setEditServer(server);
+        setSelectedServerId(server.id);
         setEditSuspDate(server.suspension_date ? server.suspension_date.slice(0, 16) : '');
         setEditTermDate(server.termination_date ? server.termination_date.slice(0, 16) : '');
         setEditNotify(server.notify_user);
         setEditNotes(server.notes || '');
+        setSingleModalOpen(true);
     };
 
-    const servers = overviewQuery.data?.servers || [];
+    const openScheduleNew = () => {
+        if (!selectedServerId && servers.length > 0) {
+            const first = servers[0];
+            setSelectedServerId(first.id);
+            setEditSuspDate(first.suspension_date ? first.suspension_date.slice(0, 16) : '');
+            setEditTermDate(first.termination_date ? first.termination_date.slice(0, 16) : '');
+            setEditNotify(first.notify_user);
+            setEditNotes(first.notes || '');
+        }
+        setSingleModalOpen(true);
+    };
+
+    const setSuspensionDays = (days: number) => {
+        const d = new Date();
+        d.setDate(d.getDate() + days);
+        const pad = (n: number) => String(n).padStart(2, '0');
+        const str = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        setEditSuspDate(str);
+    };
+
+    const setTerminationGrace = (daysAfter: number) => {
+        const base = editSuspDate ? new Date(editSuspDate) : new Date();
+        base.setDate(base.getDate() + daysAfter);
+        const pad = (n: number) => String(n).padStart(2, '0');
+        const str = `${base.getFullYear()}-${pad(base.getMonth() + 1)}-${pad(base.getDate())}T${pad(base.getHours())}:${pad(base.getMinutes())}`;
+        setEditTermDate(str);
+    };
 
     const filteredServers = servers.filter((s) => {
         const matchesQuery =
@@ -195,13 +226,7 @@ export default function SuspensionScreen() {
                     <button
                         type="button"
                         className="pe-btn pe-btn-primary"
-                        onClick={() => {
-                            if (servers.length > 0) {
-                                openEdit(servers[0]);
-                            } else {
-                                toast.error('No servers available');
-                            }
-                        }}
+                        onClick={openScheduleNew}
                     >
                         + Set Suspension Date
                     </button>
@@ -438,44 +463,76 @@ export default function SuspensionScreen() {
                 </table>
             </div>
 
-            {/* Edit Server Schedule Modal */}
-            {editServer && (
-                <div className="pe-modal-overlay" onClick={() => setEditServer(null)}>
+            {/* Single Server Schedule Modal */}
+            {singleModalOpen && (
+                <div className="pe-modal-overlay" onClick={() => setSingleModalOpen(false)}>
                     <div className="pe-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="pe-modal-header">
                             <h3 className="pe-title" style={{ fontSize: '1.1rem' }}>
-                                Schedule Expiration: {editServer.name}
+                                Schedule Server Suspension & Expiration
                             </h3>
                             <button
                                 type="button"
                                 style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '1.4rem', cursor: 'pointer' }}
-                                onClick={() => setEditServer(null)}
+                                onClick={() => setSingleModalOpen(false)}
                             >
                                 &times;
                             </button>
                         </div>
 
+                        {/* Step 1: Select Server with Search Filter */}
                         <div className="pe-form-group">
-                            <label className="pe-form-label">Target Server</label>
+                            <label className="pe-form-label">Select Target Server</label>
+                            <input
+                                type="text"
+                                className="pe-input"
+                                placeholder="Search servers by name or identifier..."
+                                style={{ marginBottom: 6, fontSize: '0.8125rem' }}
+                                value={serverFilterQuery}
+                                onChange={(e) => setServerFilterQuery(e.target.value)}
+                            />
                             <select
                                 className="pe-select"
                                 style={{ width: '100%' }}
-                                value={editServer.id}
+                                value={selectedServerId ?? ''}
                                 onChange={(e) => {
-                                    const found = servers.find((s) => s.id === Number(e.target.value));
-                                    if (found) openEdit(found);
+                                    const id = Number(e.target.value);
+                                    setSelectedServerId(id);
+                                    const found = servers.find((s) => s.id === id);
+                                    if (found) {
+                                        setEditSuspDate(found.suspension_date ? found.suspension_date.slice(0, 16) : '');
+                                        setEditTermDate(found.termination_date ? found.termination_date.slice(0, 16) : '');
+                                        setEditNotify(found.notify_user);
+                                        setEditNotes(found.notes || '');
+                                    }
                                 }}
                             >
-                                {servers.map((s) => (
-                                    <option key={s.id} value={s.id}>
-                                        {s.name} ({s.identifier}) - {s.owner}
-                                    </option>
-                                ))}
+                                {servers.length === 0 && <option value="">No servers loaded</option>}
+                                {servers
+                                    .filter((s) =>
+                                        !serverFilterQuery ||
+                                        s.name.toLowerCase().includes(serverFilterQuery.toLowerCase()) ||
+                                        s.identifier.toLowerCase().includes(serverFilterQuery.toLowerCase()) ||
+                                        s.owner.toLowerCase().includes(serverFilterQuery.toLowerCase())
+                                    )
+                                    .map((s) => (
+                                        <option key={s.id} value={s.id}>
+                                            {s.name} ({s.identifier}) - {s.owner}
+                                        </option>
+                                    ))}
                             </select>
                         </div>
 
+                        {/* Step 2: Suspension Date & Quick Presets */}
                         <div className="pe-form-group">
-                            <label className="pe-form-label">Suspension Date & Time</label>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                                <label className="pe-form-label" style={{ marginBottom: 0 }}>Suspension Date & Time</label>
+                                <div style={{ display: 'flex', gap: 4 }}>
+                                    <button type="button" className="pe-btn pe-btn-secondary" style={{ padding: '2px 8px', fontSize: '0.72rem' }} onClick={() => setSuspensionDays(7)}>+7d</button>
+                                    <button type="button" className="pe-btn pe-btn-secondary" style={{ padding: '2px 8px', fontSize: '0.72rem' }} onClick={() => setSuspensionDays(14)}>+14d</button>
+                                    <button type="button" className="pe-btn pe-btn-secondary" style={{ padding: '2px 8px', fontSize: '0.72rem' }} onClick={() => setSuspensionDays(30)}>+30d</button>
+                                </div>
+                            </div>
                             <input
                                 type="datetime-local"
                                 className="pe-input"
@@ -484,8 +541,15 @@ export default function SuspensionScreen() {
                             />
                         </div>
 
+                        {/* Step 3: Termination Date & Grace Presets */}
                         <div className="pe-form-group">
-                            <label className="pe-form-label">Permanent Termination Date & Time (Optional)</label>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                                <label className="pe-form-label" style={{ marginBottom: 0 }}>Permanent Termination Date (Optional)</label>
+                                <div style={{ display: 'flex', gap: 4 }}>
+                                    <button type="button" className="pe-btn pe-btn-secondary" style={{ padding: '2px 8px', fontSize: '0.72rem' }} onClick={() => setTerminationGrace(3)}>+3d Grace</button>
+                                    <button type="button" className="pe-btn pe-btn-secondary" style={{ padding: '2px 8px', fontSize: '0.72rem' }} onClick={() => setTerminationGrace(7)}>+7d Grace</button>
+                                </div>
+                            </div>
                             <input
                                 type="datetime-local"
                                 className="pe-input"
@@ -494,6 +558,7 @@ export default function SuspensionScreen() {
                             />
                         </div>
 
+                        {/* Step 4: Notification toggle */}
                         <div className="pe-form-group">
                             <label className="pe-checkbox-label">
                                 <input
@@ -501,10 +566,11 @@ export default function SuspensionScreen() {
                                     checked={editNotify}
                                     onChange={(e) => setEditNotify(e.target.checked)}
                                 />
-                                <span>Send automated email notification to owner ({editServer.owner_email}) upon suspension</span>
+                                <span>Send automated email notification to server owner upon suspension</span>
                             </label>
                         </div>
 
+                        {/* Step 5: Notes */}
                         <div className="pe-form-group">
                             <label className="pe-form-label">Internal Notes / Reason</label>
                             <textarea
@@ -517,37 +583,44 @@ export default function SuspensionScreen() {
                         </div>
 
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
-                            {editServer.suspension_date && (
+                            {selectedServerId && servers.find((s) => s.id === selectedServerId)?.suspension_date ? (
                                 <button
                                     type="button"
                                     className="pe-btn pe-btn-danger"
-                                    onClick={() => actionMutation.mutate({ server_id: editServer.id, action: 'cancel' })}
+                                    onClick={() => {
+                                        actionMutation.mutate({ server_id: selectedServerId, action: 'cancel' });
+                                        setSingleModalOpen(false);
+                                    }}
                                 >
                                     Cancel Schedule
                                 </button>
-                            )}
+                            ) : <div />}
 
-                            <div style={{ display: 'flex', gap: 8, marginLeft: 'auto' }}>
+                            <div style={{ display: 'flex', gap: 8 }}>
                                 <button
                                     type="button"
                                     className="pe-btn pe-btn-secondary"
-                                    onClick={() => setEditServer(null)}
+                                    onClick={() => setSingleModalOpen(false)}
                                 >
                                     Close
                                 </button>
                                 <button
                                     type="button"
                                     className="pe-btn pe-btn-primary"
-                                    disabled={updateScheduleMutation.isPending}
-                                    onClick={() =>
+                                    disabled={updateScheduleMutation.isPending || !selectedServerId}
+                                    onClick={() => {
+                                        if (!selectedServerId) {
+                                            toast.error('Please select a server first');
+                                            return;
+                                        }
                                         updateScheduleMutation.mutate({
-                                            server_id: editServer.id,
+                                            server_id: selectedServerId,
                                             suspension_date: editSuspDate || null,
                                             termination_date: editTermDate || null,
                                             notify_user: editNotify,
                                             notes: editNotes,
-                                        })
-                                    }
+                                        });
+                                    }}
                                 >
                                     {updateScheduleMutation.isPending ? <span className="pe-spinner" /> : 'Save Schedule'}
                                 </button>

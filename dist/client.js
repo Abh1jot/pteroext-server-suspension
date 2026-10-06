@@ -48,12 +48,14 @@ function SuspensionScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [nodeFilter, setNodeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [editServer, setEditServer] = useState(null);
+  const [singleModalOpen, setSingleModalOpen] = useState(false);
+  const [selectedServerId, setSelectedServerId] = useState(null);
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
   const [editSuspDate, setEditSuspDate] = useState("");
   const [editTermDate, setEditTermDate] = useState("");
   const [editNotify, setEditNotify] = useState(true);
   const [editNotes, setEditNotes] = useState("");
+  const [serverFilterQuery, setServerFilterQuery] = useState("");
   const [bulkSuspDate, setBulkSuspDate] = useState("");
   const [bulkGraceDays, setBulkGraceDays] = useState(7);
   const [bulkNotify, setBulkNotify] = useState(true);
@@ -79,7 +81,7 @@ function SuspensionScreen() {
     },
     onSuccess: (data) => {
       toast.success(data.message || "Schedule updated");
-      setEditServer(null);
+      setSingleModalOpen(false);
       queryClient.invalidateQueries({ queryKey: ["admin-suspension-overview"] });
     },
     onError: (err) => toast.error(err.message)
@@ -136,14 +138,40 @@ function SuspensionScreen() {
     },
     onError: (err) => toast.error(err.message)
   });
+  const servers = overviewQuery.data?.servers || [];
   const openEdit = (server) => {
-    setEditServer(server);
+    setSelectedServerId(server.id);
     setEditSuspDate(server.suspension_date ? server.suspension_date.slice(0, 16) : "");
     setEditTermDate(server.termination_date ? server.termination_date.slice(0, 16) : "");
     setEditNotify(server.notify_user);
     setEditNotes(server.notes || "");
+    setSingleModalOpen(true);
   };
-  const servers = overviewQuery.data?.servers || [];
+  const openScheduleNew = () => {
+    if (!selectedServerId && servers.length > 0) {
+      const first = servers[0];
+      setSelectedServerId(first.id);
+      setEditSuspDate(first.suspension_date ? first.suspension_date.slice(0, 16) : "");
+      setEditTermDate(first.termination_date ? first.termination_date.slice(0, 16) : "");
+      setEditNotify(first.notify_user);
+      setEditNotes(first.notes || "");
+    }
+    setSingleModalOpen(true);
+  };
+  const setSuspensionDays = (days) => {
+    const d = /* @__PURE__ */ new Date();
+    d.setDate(d.getDate() + days);
+    const pad = (n) => String(n).padStart(2, "0");
+    const str = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    setEditSuspDate(str);
+  };
+  const setTerminationGrace = (daysAfter) => {
+    const base = editSuspDate ? new Date(editSuspDate) : /* @__PURE__ */ new Date();
+    base.setDate(base.getDate() + daysAfter);
+    const pad = (n) => String(n).padStart(2, "0");
+    const str = `${base.getFullYear()}-${pad(base.getMonth() + 1)}-${pad(base.getDate())}T${pad(base.getHours())}:${pad(base.getMinutes())}`;
+    setEditTermDate(str);
+  };
   const filteredServers = servers.filter((s) => {
     const matchesQuery = s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.identifier.toLowerCase().includes(searchQuery.toLowerCase()) || s.owner.toLowerCase().includes(searchQuery.toLowerCase()) || s.owner_email.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesNode = nodeFilter === "all" || s.node_id === Number(nodeFilter);
@@ -177,13 +205,7 @@ function SuspensionScreen() {
           {
             type: "button",
             className: "pe-btn pe-btn-primary",
-            onClick: () => {
-              if (servers.length > 0) {
-                openEdit(servers[0]);
-              } else {
-                toast.error("No servers available");
-              }
-            },
+            onClick: openScheduleNew,
             children: "+ Set Suspension Date"
           }
         ),
@@ -385,46 +407,73 @@ function SuspensionScreen() {
         ] }, server.id);
       }) })
     ] }) }),
-    editServer && /* @__PURE__ */ jsx("div", { className: "pe-modal-overlay", onClick: () => setEditServer(null), children: /* @__PURE__ */ jsxs("div", { className: "pe-modal", onClick: (e) => e.stopPropagation(), children: [
+    singleModalOpen && /* @__PURE__ */ jsx("div", { className: "pe-modal-overlay", onClick: () => setSingleModalOpen(false), children: /* @__PURE__ */ jsxs("div", { className: "pe-modal", onClick: (e) => e.stopPropagation(), children: [
       /* @__PURE__ */ jsxs("div", { className: "pe-modal-header", children: [
-        /* @__PURE__ */ jsxs("h3", { className: "pe-title", style: { fontSize: "1.1rem" }, children: [
-          "Schedule Expiration: ",
-          editServer.name
-        ] }),
+        /* @__PURE__ */ jsx("h3", { className: "pe-title", style: { fontSize: "1.1rem" }, children: "Schedule Server Suspension & Expiration" }),
         /* @__PURE__ */ jsx(
           "button",
           {
             type: "button",
             style: { background: "transparent", border: "none", color: "#94a3b8", fontSize: "1.4rem", cursor: "pointer" },
-            onClick: () => setEditServer(null),
+            onClick: () => setSingleModalOpen(false),
             children: "\xD7"
           }
         )
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "pe-form-group", children: [
-        /* @__PURE__ */ jsx("label", { className: "pe-form-label", children: "Target Server" }),
+        /* @__PURE__ */ jsx("label", { className: "pe-form-label", children: "Select Target Server" }),
         /* @__PURE__ */ jsx(
+          "input",
+          {
+            type: "text",
+            className: "pe-input",
+            placeholder: "Search servers by name or identifier...",
+            style: { marginBottom: 6, fontSize: "0.8125rem" },
+            value: serverFilterQuery,
+            onChange: (e) => setServerFilterQuery(e.target.value)
+          }
+        ),
+        /* @__PURE__ */ jsxs(
           "select",
           {
             className: "pe-select",
             style: { width: "100%" },
-            value: editServer.id,
+            value: selectedServerId ?? "",
             onChange: (e) => {
-              const found = servers.find((s) => s.id === Number(e.target.value));
-              if (found) openEdit(found);
+              const id = Number(e.target.value);
+              setSelectedServerId(id);
+              const found = servers.find((s) => s.id === id);
+              if (found) {
+                setEditSuspDate(found.suspension_date ? found.suspension_date.slice(0, 16) : "");
+                setEditTermDate(found.termination_date ? found.termination_date.slice(0, 16) : "");
+                setEditNotify(found.notify_user);
+                setEditNotes(found.notes || "");
+              }
             },
-            children: servers.map((s) => /* @__PURE__ */ jsxs("option", { value: s.id, children: [
-              s.name,
-              " (",
-              s.identifier,
-              ") - ",
-              s.owner
-            ] }, s.id))
+            children: [
+              servers.length === 0 && /* @__PURE__ */ jsx("option", { value: "", children: "No servers loaded" }),
+              servers.filter(
+                (s) => !serverFilterQuery || s.name.toLowerCase().includes(serverFilterQuery.toLowerCase()) || s.identifier.toLowerCase().includes(serverFilterQuery.toLowerCase()) || s.owner.toLowerCase().includes(serverFilterQuery.toLowerCase())
+              ).map((s) => /* @__PURE__ */ jsxs("option", { value: s.id, children: [
+                s.name,
+                " (",
+                s.identifier,
+                ") - ",
+                s.owner
+              ] }, s.id))
+            ]
           }
         )
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "pe-form-group", children: [
-        /* @__PURE__ */ jsx("label", { className: "pe-form-label", children: "Suspension Date & Time" }),
+        /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }, children: [
+          /* @__PURE__ */ jsx("label", { className: "pe-form-label", style: { marginBottom: 0 }, children: "Suspension Date & Time" }),
+          /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 4 }, children: [
+            /* @__PURE__ */ jsx("button", { type: "button", className: "pe-btn pe-btn-secondary", style: { padding: "2px 8px", fontSize: "0.72rem" }, onClick: () => setSuspensionDays(7), children: "+7d" }),
+            /* @__PURE__ */ jsx("button", { type: "button", className: "pe-btn pe-btn-secondary", style: { padding: "2px 8px", fontSize: "0.72rem" }, onClick: () => setSuspensionDays(14), children: "+14d" }),
+            /* @__PURE__ */ jsx("button", { type: "button", className: "pe-btn pe-btn-secondary", style: { padding: "2px 8px", fontSize: "0.72rem" }, onClick: () => setSuspensionDays(30), children: "+30d" })
+          ] })
+        ] }),
         /* @__PURE__ */ jsx(
           "input",
           {
@@ -436,7 +485,13 @@ function SuspensionScreen() {
         )
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "pe-form-group", children: [
-        /* @__PURE__ */ jsx("label", { className: "pe-form-label", children: "Permanent Termination Date & Time (Optional)" }),
+        /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }, children: [
+          /* @__PURE__ */ jsx("label", { className: "pe-form-label", style: { marginBottom: 0 }, children: "Permanent Termination Date (Optional)" }),
+          /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 4 }, children: [
+            /* @__PURE__ */ jsx("button", { type: "button", className: "pe-btn pe-btn-secondary", style: { padding: "2px 8px", fontSize: "0.72rem" }, onClick: () => setTerminationGrace(3), children: "+3d Grace" }),
+            /* @__PURE__ */ jsx("button", { type: "button", className: "pe-btn pe-btn-secondary", style: { padding: "2px 8px", fontSize: "0.72rem" }, onClick: () => setTerminationGrace(7), children: "+7d Grace" })
+          ] })
+        ] }),
         /* @__PURE__ */ jsx(
           "input",
           {
@@ -456,11 +511,7 @@ function SuspensionScreen() {
             onChange: (e) => setEditNotify(e.target.checked)
           }
         ),
-        /* @__PURE__ */ jsxs("span", { children: [
-          "Send automated email notification to owner (",
-          editServer.owner_email,
-          ") upon suspension"
-        ] })
+        /* @__PURE__ */ jsx("span", { children: "Send automated email notification to server owner upon suspension" })
       ] }) }),
       /* @__PURE__ */ jsxs("div", { className: "pe-form-group", children: [
         /* @__PURE__ */ jsx("label", { className: "pe-form-label", children: "Internal Notes / Reason" }),
@@ -476,22 +527,25 @@ function SuspensionScreen() {
         )
       ] }),
       /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", marginTop: 20 }, children: [
-        editServer.suspension_date && /* @__PURE__ */ jsx(
+        selectedServerId && servers.find((s) => s.id === selectedServerId)?.suspension_date ? /* @__PURE__ */ jsx(
           "button",
           {
             type: "button",
             className: "pe-btn pe-btn-danger",
-            onClick: () => actionMutation.mutate({ server_id: editServer.id, action: "cancel" }),
+            onClick: () => {
+              actionMutation.mutate({ server_id: selectedServerId, action: "cancel" });
+              setSingleModalOpen(false);
+            },
             children: "Cancel Schedule"
           }
-        ),
-        /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 8, marginLeft: "auto" }, children: [
+        ) : /* @__PURE__ */ jsx("div", {}),
+        /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 8 }, children: [
           /* @__PURE__ */ jsx(
             "button",
             {
               type: "button",
               className: "pe-btn pe-btn-secondary",
-              onClick: () => setEditServer(null),
+              onClick: () => setSingleModalOpen(false),
               children: "Close"
             }
           ),
@@ -500,14 +554,20 @@ function SuspensionScreen() {
             {
               type: "button",
               className: "pe-btn pe-btn-primary",
-              disabled: updateScheduleMutation.isPending,
-              onClick: () => updateScheduleMutation.mutate({
-                server_id: editServer.id,
-                suspension_date: editSuspDate || null,
-                termination_date: editTermDate || null,
-                notify_user: editNotify,
-                notes: editNotes
-              }),
+              disabled: updateScheduleMutation.isPending || !selectedServerId,
+              onClick: () => {
+                if (!selectedServerId) {
+                  toast.error("Please select a server first");
+                  return;
+                }
+                updateScheduleMutation.mutate({
+                  server_id: selectedServerId,
+                  suspension_date: editSuspDate || null,
+                  termination_date: editTermDate || null,
+                  notify_user: editNotify,
+                  notes: editNotes
+                });
+              },
               children: updateScheduleMutation.isPending ? /* @__PURE__ */ jsx("span", { className: "pe-spinner" }) : "Save Schedule"
             }
           )

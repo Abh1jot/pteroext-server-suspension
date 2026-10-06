@@ -16,15 +16,27 @@ class SuspensionController extends Controller
 {
     public function getOverview(): JsonResponse
     {
+        // Auto-create table if migration hasn't been run yet
         if (!Schema::hasTable('ext_server_suspensions')) {
-            return response()->json([
-                'stats' => ['total' => 0, 'scheduled' => 0, 'suspended' => 0, 'terminated' => 0],
-                'servers' => [],
-                'nodes' => [],
-            ]);
+            try {
+                Schema::create('ext_server_suspensions', function ($table) {
+                    $table->id();
+                    $table->unsignedInteger('server_id')->unique();
+                    $table->timestamp('suspension_date')->nullable();
+                    $table->timestamp('termination_date')->nullable();
+                    $table->boolean('notify_user')->default(true);
+                    $table->string('status', 32)->default('active');
+                    $table->timestamp('suspended_at')->nullable();
+                    $table->timestamp('terminated_at')->nullable();
+                    $table->text('notes')->nullable();
+                    $table->timestamps();
+                });
+            } catch (\Throwable $e) {}
         }
 
-        $schedules = DB::table('ext_server_suspensions')->get()->keyBy('server_id');
+        $schedules = Schema::hasTable('ext_server_suspensions')
+            ? DB::table('ext_server_suspensions')->get()->keyBy('server_id')
+            : collect();
 
         $servers = Server::query()
             ->with(['user:id,username,email', 'node:id,name'])
@@ -35,7 +47,7 @@ class SuspensionController extends Controller
                     'id' => $s->id,
                     'identifier' => $s->identifier ?? $s->uuidShort,
                     'name' => $s->name,
-                    'node' => $s->node?->name ?? 'Unknown',
+                    'node' => $s->node?->name ?? 'Default Node',
                     'node_id' => $s->node_id,
                     'owner' => $s->user?->username ?? 'Unknown',
                     'owner_email' => $s->user?->email ?? '',
@@ -78,7 +90,20 @@ class SuspensionController extends Controller
         ]);
 
         if (!Schema::hasTable('ext_server_suspensions')) {
-            return response()->json(['error' => 'Database tables not migrated yet.'], 500);
+            try {
+                Schema::create('ext_server_suspensions', function ($table) {
+                    $table->id();
+                    $table->unsignedInteger('server_id')->unique();
+                    $table->timestamp('suspension_date')->nullable();
+                    $table->timestamp('termination_date')->nullable();
+                    $table->boolean('notify_user')->default(true);
+                    $table->string('status', 32)->default('active');
+                    $table->timestamp('suspended_at')->nullable();
+                    $table->timestamp('terminated_at')->nullable();
+                    $table->text('notes')->nullable();
+                    $table->timestamps();
+                });
+            } catch (\Throwable $e) {}
         }
 
         DB::table('ext_server_suspensions')->updateOrInsert(
