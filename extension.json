@@ -1,0 +1,31 @@
+{
+    "$schema": "./node_modules/@pterodactyl/sdk/manifest.schema.json",
+    "id": "server-suspension",
+    "name": "Auto Server Suspension",
+    "version": "2.0.0",
+    "description": "Automated server expiration scheduler with custom suspension dates, owner email notifications, and grace-period termination.",
+    "author": "Azion",
+    "requires": {
+        "panel": "^2.0.0-dev",
+        "sdk": "^2.0.0-beta.3",
+        "php": "^8.3"
+    },
+    "provider": "ServerSuspension\\ServerSuspensionProvider",
+    "autoload": {
+        "ServerSuspension\\": "src"
+    },
+    "ui": {
+        "entry": "dist/client.js",
+        "screens": [
+            {
+                "id": "admin-suspension",
+                "area": "admin",
+                "path": "server-suspension",
+                "nav": {
+                    "label": "Suspensions",
+                    "order": 55
+                }
+            }
+        ]
+    }
+}
