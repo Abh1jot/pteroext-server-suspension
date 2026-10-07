@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Models\Node;
 use Pterodactyl\Facades\Daemon;
+use ServerSuspension\Services\SuspensionMailService;
 
 class SuspensionController extends Controller
 {
@@ -28,6 +29,7 @@ class SuspensionController extends Controller
                     $table->boolean('notify_user')->default(true);
                     $table->string('status', 32)->default('active');
                     $table->timestamp('suspended_at')->nullable();
+                    $table->timestamp('warning_sent_at')->nullable();
                     $table->timestamp('terminated_at')->nullable();
                     $table->text('notes')->nullable();
                     $table->timestamps();
@@ -35,6 +37,12 @@ class SuspensionController extends Controller
             } catch (\Throwable $e) {
                 Log::warning('ServerSuspension table creation note: ' . $e->getMessage());
             }
+        } elseif (!Schema::hasColumn('ext_server_suspensions', 'warning_sent_at')) {
+            try {
+                Schema::table('ext_server_suspensions', function ($table) {
+                    $table->timestamp('warning_sent_at')->nullable()->after('suspended_at');
+                });
+            } catch (\Throwable) {}
         }
 
         $schedules = Schema::hasTable('ext_server_suspensions')
@@ -215,4 +223,129 @@ class SuspensionController extends Controller
         Artisan::call('p:server-suspension:process');
         return response()->json(['message' => 'Processed all due suspensions and terminations.']);
     }
+
+    public function getMailTemplates(SuspensionMailService $mailService): JsonResponse
+    {
+        $templates = $mailService->getAllTemplates();
+        $templates['admin_email'] = auth()->user()?->email ?? '';
+        return response()->json($templates);
+    }
+
+    public function updateMailTemplates(Request $request, SuspensionMailService $mailService): JsonResponse
+    {
+        $validated = $request->validate([
+            'mail_notifications_enabled' => 'nullable|boolean',
+            'mail_subject' => 'required|string|max:255',
+            'mail_body' => 'required|string|max:10000',
+            'warning_mail_enabled' => 'nullable|boolean',
+            'warning_mail_subject' => 'required|string|max:255',
+            'warning_mail_body' => 'required|string|max:10000',
+            'termination_mail_enabled' => 'nullable|boolean',
+            'termination_mail_subject' => 'required|string|max:255',
+            'termination_mail_body' => 'required|string|max:10000',
+        ]);
+
+        $mailService->setSetting('mail_notifications_enabled', $validated['mail_notifications_enabled'] ?? true);
+        $mailService->setSetting('mail_subject', $validated['mail_subject']);
+        $mailService->setSetting('mail_body', $validated['mail_body']);
+
+        $mailService->setSetting('warning_mail_enabled', $validated['warning_mail_enabled'] ?? true);
+        $mailService->setSetting('warning_mail_subject', $validated['warning_mail_subject']);
+        $mailService->setSetting('warning_mail_body', $validated['warning_mail_body']);
+
+        $mailService->setSetting('termination_mail_enabled', $validated['termination_mail_enabled'] ?? true);
+        $mailService->setSetting('termination_mail_subject', $validated['termination_mail_subject']);
+        $mailService->setSetting('termination_mail_body', $validated['termination_mail_body']);
+
+        return response()->json([
+            'message' => 'Email notification templates saved successfully.',
+        ]);
+    }
+
+    public function sendTestMail(Request $request, SuspensionMailService $mailService): JsonResponse
+    {
+        $validated = $request->validate([
+            'template_type' => 'required|in:suspension,warning,termination',
+            'subject' => 'nullable|string',
+            'body' => 'nullable|string',
+            'email' => 'nullable|email',
+        ]);
+
+        $recipientEmail = $validated['email'] ?? $request->user()?->email;
+        if (!$recipientEmail) {
+            return response()->json(['error' => 'No target email specified. Provide an email address or log in.'], 422);
+        }
+
+        $type = $validated['template_type'];
+        $subjectTpl = $validated['subject'];
+        $bodyTpl = $validated['body'];
+
+        if (empty($subjectTpl)) {
+            $key = match ($type) {
+                'warning' => 'warning_mail_subject',
+                'termination' => 'termination_mail_subject',
+                default => 'mail_subject',
+            };
+            $default = match ($type) {
+                'warning' => SuspensionMailService::DEFAULT_WARNING_SUBJECT,
+                'termination' => SuspensionMailService::DEFAULT_TERMINATION_SUBJECT,
+                default => SuspensionMailService::DEFAULT_SUSPENSION_SUBJECT,
+            };
+            $subjectTpl = (string) $mailService->getSetting($key, $default);
+        }
+
+        if (empty($bodyTpl)) {
+            $key = match ($type) {
+                'warning' => 'warning_mail_body',
+                'termination' => 'termination_mail_body',
+                default => 'mail_body',
+            };
+            $default = match ($type) {
+                'warning' => SuspensionMailService::DEFAULT_WARNING_BODY,
+                'termination' => SuspensionMailService::DEFAULT_TERMINATION_BODY,
+                default => SuspensionMailService::DEFAULT_SUSPENSION_BODY,
+            };
+            $bodyTpl = (string) $mailService->getSetting($key, $default);
+        }
+
+        $panelUrl = config('app.url') ?? 'https://panel.example.com';
+        $vars = [
+            '{username}' => $request->user()?->username ?? 'Administrator',
+            '{user_name}' => $request->user()?->username ?? 'Administrator',
+            '{server_name}' => 'Demo Survival Minecraft',
+            '{server_id}' => '142',
+            '{server_uuid}' => 'a8f39b1c',
+            '{suspension_date}' => date('M d, Y H:i', strtotime('+1 day')),
+            '{termination_date}' => date('M d, Y H:i', strtotime('+8 days')),
+            '{panel_url}' => $panelUrl,
+        ];
+
+        $subject = '[TEST] ' . $mailService->replacePlaceholders($subjectTpl, $vars);
+        $bodyText = $mailService->replacePlaceholders($bodyTpl, $vars);
+
+        $badgeType = match ($type) {
+            'warning' => 'warning',
+            'termination' => 'termination',
+            default => 'suspension',
+        };
+
+        $html = $mailService->renderHtmlEmail($subject, $bodyText, $badgeType, [
+            'Test Recipient' => $recipientEmail,
+            'Template Type' => ucfirst($type),
+            'Sample Server' => 'Demo Survival Minecraft',
+            'Sample Expiration' => date('M d, Y H:i', strtotime('+8 days')),
+        ]);
+
+        try {
+            $mailService->sendEmail($recipientEmail, $subject, $html, $bodyText);
+            return response()->json([
+                'message' => "Test email successfully sent to {$recipientEmail}.",
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => "Failed to deliver email: {$e->getMessage()}",
+            ], 500);
+        }
+    }
 }
+

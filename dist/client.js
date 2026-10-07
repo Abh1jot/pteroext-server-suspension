@@ -1,24 +1,20 @@
-// Pterodactyl 2.0 Extension Stylesheet Loader & Synchronous Injector
+
 (function() {
-    if (typeof document !== 'undefined') {
-        const id = 'ext-styles-server-suspension';
-        if (!document.getElementById(id)) {
-            try {
-                const link = document.createElement('link');
-                link.id = id;
-                link.rel = 'stylesheet';
-                link.href = new URL('./client.css', import.meta.url).href;
-                document.head.appendChild(link);
-            } catch (e) {}
-            try {
+    try {
+        if (typeof document !== 'undefined') {
+            const styleId = 'ext-style-server-suspension';
+            if (!document.getElementById(styleId)) {
                 const style = document.createElement('style');
-                style.id = id + '-inline';
-                style.textContent = "/* src/client/styles.css */\n.pe-container {\n  width: 100%;\n  margin: 0 auto;\n  padding-top: 24px;\n  padding-bottom: 32px;\n  font-family: inherit;\n  color: var(--foreground, #f8fafc);\n  box-sizing: border-box;\n}\n.pe-container *,\n.pe-container *::before,\n.pe-container *::after {\n  box-sizing: border-box;\n}\n.pe-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 16px;\n  margin-bottom: 24px;\n  flex-wrap: wrap;\n}\n.pe-title-wrap {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n.pe-title {\n  font-size: 1.25rem;\n  font-weight: 600;\n  color: var(--foreground, #ffffff);\n  margin: 0;\n  letter-spacing: -0.015em;\n}\n.pe-subtitle {\n  font-size: 0.8125rem;\n  color: var(--muted-foreground, #94a3b8);\n  margin: 0;\n}\n.pe-stats-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: 14px;\n  margin-bottom: 24px;\n}\n.pe-stat-card {\n  background: var(--card, rgba(30, 41, 59, 0.45));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  border-radius: 10px;\n  padding: 16px 20px;\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n}\n.pe-stat-val {\n  font-size: 1.5rem;\n  font-weight: 700;\n  color: var(--foreground, #ffffff);\n  line-height: 1.2;\n}\n.pe-stat-label {\n  font-size: 0.75rem;\n  font-weight: 500;\n  color: var(--muted-foreground, #94a3b8);\n  text-transform: uppercase;\n  letter-spacing: 0.04em;\n}\n.pe-toolbar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  margin-bottom: 18px;\n  flex-wrap: wrap;\n}\n.pe-input-box {\n  position: relative;\n  flex: 1;\n  min-width: 240px;\n}\n.pe-input {\n  width: 100%;\n  padding: 8px 14px 8px 36px;\n  background: var(--input, rgba(15, 23, 42, 0.6));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n  border-radius: 8px;\n  color: var(--foreground, #f8fafc);\n  font-size: 0.84375rem;\n  outline: none;\n  transition: border-color 0.15s ease, box-shadow 0.15s ease;\n}\n.pe-input:focus {\n  border-color: var(--ring, #6366f1);\n  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);\n}\n.pe-input-icon {\n  position: absolute;\n  left: 11px;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 15px;\n  height: 15px;\n  color: var(--muted-foreground, #64748b);\n  pointer-events: none;\n}\n.pe-select {\n  padding: 8px 12px;\n  background: var(--input, rgba(15, 23, 42, 0.6));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n  border-radius: 8px;\n  color: var(--foreground, #f8fafc);\n  font-size: 0.84375rem;\n  outline: none;\n  cursor: pointer;\n}\n.pe-select:focus {\n  border-color: var(--ring, #6366f1);\n}\n.pe-table-card {\n  background: var(--card, rgba(30, 41, 59, 0.4));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  border-radius: 10px;\n  overflow-x: auto;\n}\n.pe-table {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.84375rem;\n  text-align: left;\n}\n.pe-table th {\n  padding: 12px 16px;\n  background: rgba(0, 0, 0, 0.15);\n  color: var(--muted-foreground, #94a3b8);\n  font-weight: 600;\n  font-size: 0.75rem;\n  text-transform: uppercase;\n  letter-spacing: 0.04em;\n  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.06));\n  white-space: nowrap;\n}\n.pe-table td {\n  padding: 12px 16px;\n  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.04));\n  color: var(--foreground, #e2e8f0);\n  vertical-align: middle;\n}\n.pe-table tr:hover td {\n  background: rgba(255, 255, 255, 0.02);\n}\n.pe-time-cell {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  min-width: 190px;\n}\n.pe-time-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n}\n.pe-time-date {\n  font-size: 0.8125rem;\n  font-weight: 600;\n  color: #f8fafc;\n  white-space: nowrap;\n}\n.pe-time-chip {\n  display: inline-flex;\n  align-items: center;\n  gap: 4px;\n  padding: 2px 7px;\n  border-radius: 9999px;\n  font-size: 0.7rem;\n  font-weight: 600;\n  line-height: 1.2;\n  white-space: nowrap;\n}\n.pe-time-chip-good {\n  background: rgba(16, 185, 129, 0.12);\n  color: #34d399;\n  border: 1px solid rgba(16, 185, 129, 0.25);\n}\n.pe-time-chip-warning {\n  background: rgba(245, 158, 11, 0.12);\n  color: #fbbf24;\n  border: 1px solid rgba(245, 158, 11, 0.25);\n}\n.pe-time-chip-critical {\n  background: rgba(239, 68, 68, 0.14);\n  color: #f87171;\n  border: 1px solid rgba(239, 68, 68, 0.28);\n}\n.pe-time-chip-muted {\n  background: rgba(148, 163, 184, 0.1);\n  color: #94a3b8;\n  border: 1px solid rgba(148, 163, 184, 0.2);\n}\n.pe-progress-track {\n  width: 100%;\n  height: 6px;\n  background: rgba(255, 255, 255, 0.08);\n  border-radius: 9999px;\n  overflow: hidden;\n  position: relative;\n}\n.pe-progress-fill {\n  height: 100%;\n  border-radius: 9999px;\n  transition: width 0.35s ease, background 0.35s ease;\n}\n.pe-progress-fill-good {\n  background:\n    linear-gradient(\n      90deg,\n      #10b981,\n      #059669);\n  box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);\n}\n.pe-progress-fill-warning {\n  background:\n    linear-gradient(\n      90deg,\n      #f59e0b,\n      #d97706);\n  box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);\n}\n.pe-progress-fill-critical {\n  background:\n    linear-gradient(\n      90deg,\n      #ef4444,\n      #dc2626);\n  box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);\n}\n.pe-preview-card {\n  background: rgba(15, 23, 42, 0.7);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  border-radius: 10px;\n  padding: 14px 16px;\n  margin: 14px 0;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n.pe-preview-title {\n  font-size: 0.72rem;\n  font-weight: 600;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-preview-row {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n.pe-badge {\n  display: inline-flex;\n  align-items: center;\n  gap: 5px;\n  padding: 3px 8px;\n  border-radius: 9999px;\n  font-size: 0.72rem;\n  font-weight: 500;\n  line-height: 1;\n}\n.pe-badge-dot {\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n}\n.pe-badge-active {\n  background: rgba(34, 197, 94, 0.12);\n  color: #4ade80;\n  border: 1px solid rgba(34, 197, 94, 0.25);\n}\n.pe-badge-active .pe-badge-dot {\n  background: #22c55e;\n}\n.pe-badge-suspended {\n  background: rgba(239, 68, 68, 0.12);\n  color: #f87171;\n  border: 1px solid rgba(239, 68, 68, 0.25);\n}\n.pe-badge-suspended .pe-badge-dot {\n  background: #ef4444;\n}\n.pe-badge-scheduled {\n  background: rgba(234, 179, 8, 0.12);\n  color: #facc15;\n  border: 1px solid rgba(234, 179, 8, 0.25);\n}\n.pe-badge-scheduled .pe-badge-dot {\n  background: #eab308;\n}\n.pe-badge-terminated {\n  background: rgba(148, 163, 184, 0.12);\n  color: #94a3b8;\n  border: 1px solid rgba(148, 163, 184, 0.25);\n}\n.pe-badge-terminated .pe-badge-dot {\n  background: #64748b;\n}\n.pe-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 6px;\n  padding: 7px 14px;\n  border-radius: 6px;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  cursor: pointer;\n  transition: all 0.15s ease;\n  border: none;\n  outline: none;\n  white-space: nowrap;\n}\n.pe-btn-primary {\n  background: var(--primary, #6366f1);\n  color: #ffffff;\n}\n.pe-btn-primary:hover:not(:disabled) {\n  opacity: 0.92;\n  transform: translateY(-0.5px);\n}\n.pe-btn-secondary {\n  background: var(--muted, rgba(255, 255, 255, 0.08));\n  color: var(--foreground, #ffffff);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n}\n.pe-btn-secondary:hover:not(:disabled) {\n  background: rgba(255, 255, 255, 0.12);\n}\n.pe-btn-danger {\n  background: rgba(239, 68, 68, 0.15);\n  color: #f87171;\n  border: 1px solid rgba(239, 68, 68, 0.25);\n}\n.pe-btn-danger:hover:not(:disabled) {\n  background: rgba(239, 68, 68, 0.25);\n}\n.pe-btn-preset {\n  padding: 3px 8px;\n  font-size: 0.72rem;\n  font-weight: 500;\n  border-radius: 5px;\n  background: rgba(255, 255, 255, 0.06);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  color: #cbd5e1;\n  cursor: pointer;\n  transition: all 0.12s ease;\n}\n.pe-btn-preset:hover {\n  background: rgba(255, 255, 255, 0.12);\n  color: #ffffff;\n  border-color: rgba(255, 255, 255, 0.25);\n}\n.pe-modal-overlay {\n  position: fixed;\n  inset: 0;\n  z-index: 99999;\n  background: rgba(0, 0, 0, 0.65);\n  backdrop-filter: blur(6px);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 20px;\n}\n.pe-modal {\n  position: relative;\n  width: 100%;\n  max-width: 560px;\n  background: var(--card, #1e293b);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n  border-radius: 12px;\n  padding: 24px;\n  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);\n  max-height: 92vh;\n  overflow-y: auto;\n}\n.pe-modal-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 18px;\n}\n.pe-form-group {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  margin-bottom: 16px;\n}\n.pe-form-label {\n  font-size: 0.8125rem;\n  font-weight: 500;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-checkbox-label {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 0.8125rem;\n  color: var(--foreground, #e2e8f0);\n  cursor: pointer;\n  user-select: none;\n}\n.pe-spinner {\n  width: 16px;\n  height: 16px;\n  border: 2px solid rgba(255, 255, 255, 0.2);\n  border-top-color: #ffffff;\n  border-radius: 50%;\n  animation: pe-spin 0.6s linear infinite;\n  display: inline-block;\n}\n@keyframes pe-spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.pe-slim-banner {\n  width: 100%;\n  margin-bottom: 16px;\n  background: var(--card, rgba(30, 41, 59, 0.45));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  border-radius: 8px;\n  overflow: hidden;\n  box-sizing: border-box;\n  transition: border-color 0.2s ease, background 0.2s ease;\n}\n.pe-slim-banner:hover {\n  border-color: rgba(255, 255, 255, 0.12);\n}\n.pe-slim-banner-good {\n  border-left: 3px solid #3b82f6;\n}\n.pe-slim-banner-warning {\n  border-left: 3px solid #f59e0b;\n}\n.pe-slim-banner-critical {\n  border-left: 3px solid #ef4444;\n}\n.pe-slim-banner-body {\n  padding: 9px 14px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  flex-wrap: wrap;\n}\n.pe-slim-banner-left {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.pe-slim-icon {\n  color: var(--muted-foreground, #94a3b8);\n  flex-shrink: 0;\n}\n.pe-slim-banner-good .pe-slim-icon {\n  color: #38bdf8;\n}\n.pe-slim-banner-warning .pe-slim-icon {\n  color: #fbbf24;\n}\n.pe-slim-banner-critical .pe-slim-icon {\n  color: #f87171;\n}\n.pe-slim-title {\n  font-size: 0.8125rem;\n  font-weight: 500;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-slim-date {\n  font-size: 0.8125rem;\n  font-weight: 600;\n  color: var(--foreground, #f8fafc);\n}\n.pe-slim-chip {\n  display: inline-flex;\n  align-items: center;\n  font-size: 0.7rem;\n  font-weight: 500;\n  line-height: 1;\n  padding: 2.5px 7px;\n  border-radius: 9999px;\n  background: rgba(255, 255, 255, 0.06);\n  border: 1px solid rgba(255, 255, 255, 0.08);\n  color: var(--muted-foreground, #94a3b8);\n  white-space: nowrap;\n}\n.pe-slim-chip-good {\n  background: rgba(59, 130, 246, 0.1);\n  border-color: rgba(59, 130, 246, 0.2);\n  color: #60a5fa;\n}\n.pe-slim-chip-warning {\n  background: rgba(245, 158, 11, 0.1);\n  border-color: rgba(245, 158, 11, 0.2);\n  color: #fbbf24;\n}\n.pe-slim-chip-critical {\n  background: rgba(239, 68, 68, 0.1);\n  border-color: rgba(239, 68, 68, 0.25);\n  color: #f87171;\n}\n.pe-slim-banner-right {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  font-size: 0.75rem;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-slim-term-notice {\n  font-size: 0.75rem;\n  color: #94a3b8;\n}\n.pe-slim-note {\n  font-size: 0.75rem;\n  color: #cbd5e1;\n  max-width: 220px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.pe-slim-track {\n  width: 100%;\n  height: 3px;\n  background: rgba(255, 255, 255, 0.04);\n  overflow: hidden;\n  position: relative;\n}\n.pe-slim-fill {\n  height: 100%;\n  transition: width 0.3s ease;\n}\n.pe-slim-fill-good {\n  background: #3b82f6;\n}\n.pe-slim-fill-warning {\n  background: #f59e0b;\n}\n.pe-slim-fill-critical {\n  background: #ef4444;\n}\n.pe-input-box {\n  position: relative !important;\n  display: flex !important;\n  align-items: center !important;\n}\n.pe-input-box svg.pe-input-icon,\nsvg.pe-input-icon,\n.pe-input-icon {\n  position: absolute !important;\n  left: 14px !important;\n  top: 50% !important;\n  transform: translateY(-50%) !important;\n  width: 16px !important;\n  height: 16px !important;\n  min-width: 16px !important;\n  min-height: 16px !important;\n  max-width: 16px !important;\n  max-height: 16px !important;\n  color: var(--muted-foreground, #94a3b8) !important;\n  pointer-events: none !important;\n  z-index: 10 !important;\n  display: block !important;\n  flex-shrink: 0 !important;\n}\n.pe-input-box input.pe-input,\n.pe-input-box input.pe-search-input,\ninput.pe-input,\ninput.pe-search-input {\n  width: 100% !important;\n  padding-left: 42px !important;\n  padding-right: 14px !important;\n  padding-top: 9px !important;\n  padding-bottom: 9px !important;\n  box-sizing: border-box !important;\n}\n";
+                style.id = styleId;
+                style.textContent = "/* src/client/styles.css */\n.pe-container {\n  width: 100%;\n  margin: 0 auto;\n  padding-top: 24px;\n  padding-bottom: 32px;\n  font-family: inherit;\n  color: var(--foreground, #f8fafc);\n  box-sizing: border-box;\n}\n.pe-container *,\n.pe-container *::before,\n.pe-container *::after {\n  box-sizing: border-box;\n}\n.pe-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 16px;\n  margin-bottom: 24px;\n  flex-wrap: wrap;\n}\n.pe-title-wrap {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n.pe-title {\n  font-size: 1.25rem;\n  font-weight: 600;\n  color: var(--foreground, #ffffff);\n  margin: 0;\n  letter-spacing: -0.015em;\n}\n.pe-subtitle {\n  font-size: 0.8125rem;\n  color: var(--muted-foreground, #94a3b8);\n  margin: 0;\n}\n.pe-stats-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: 14px;\n  margin-bottom: 24px;\n}\n.pe-stat-card {\n  background: var(--card, rgba(30, 41, 59, 0.45));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  border-radius: 10px;\n  padding: 16px 20px;\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n}\n.pe-stat-val {\n  font-size: 1.5rem;\n  font-weight: 700;\n  color: var(--foreground, #ffffff);\n  line-height: 1.2;\n}\n.pe-stat-label {\n  font-size: 0.75rem;\n  font-weight: 500;\n  color: var(--muted-foreground, #94a3b8);\n  text-transform: uppercase;\n  letter-spacing: 0.04em;\n}\n.pe-toolbar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  margin-bottom: 18px;\n  flex-wrap: wrap;\n}\n.pe-input-box {\n  position: relative;\n  flex: 1;\n  min-width: 240px;\n}\n.pe-input {\n  width: 100%;\n  padding: 8px 14px 8px 36px;\n  background: var(--input, rgba(15, 23, 42, 0.6));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n  border-radius: 8px;\n  color: var(--foreground, #f8fafc);\n  font-size: 0.84375rem;\n  outline: none;\n  transition: border-color 0.15s ease, box-shadow 0.15s ease;\n}\n.pe-input:focus {\n  border-color: var(--ring, #6366f1);\n  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);\n}\n.pe-input-icon {\n  position: absolute;\n  left: 11px;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 15px;\n  height: 15px;\n  color: var(--muted-foreground, #64748b);\n  pointer-events: none;\n}\n.pe-select {\n  padding: 8px 12px;\n  background: var(--input, rgba(15, 23, 42, 0.6));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n  border-radius: 8px;\n  color: var(--foreground, #f8fafc);\n  font-size: 0.84375rem;\n  outline: none;\n  cursor: pointer;\n}\n.pe-select:focus {\n  border-color: var(--ring, #6366f1);\n}\n.pe-table-card {\n  background: var(--card, rgba(30, 41, 59, 0.4));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  border-radius: 10px;\n  overflow-x: auto;\n}\n.pe-table {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.84375rem;\n  text-align: left;\n}\n.pe-table th {\n  padding: 12px 16px;\n  background: rgba(0, 0, 0, 0.15);\n  color: var(--muted-foreground, #94a3b8);\n  font-weight: 600;\n  font-size: 0.75rem;\n  text-transform: uppercase;\n  letter-spacing: 0.04em;\n  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.06));\n  white-space: nowrap;\n}\n.pe-table td {\n  padding: 12px 16px;\n  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.04));\n  color: var(--foreground, #e2e8f0);\n  vertical-align: middle;\n}\n.pe-table tr:hover td {\n  background: rgba(255, 255, 255, 0.02);\n}\n.pe-time-cell {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  min-width: 190px;\n}\n.pe-time-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n}\n.pe-time-date {\n  font-size: 0.8125rem;\n  font-weight: 600;\n  color: #f8fafc;\n  white-space: nowrap;\n}\n.pe-time-chip {\n  display: inline-flex;\n  align-items: center;\n  gap: 4px;\n  padding: 2px 7px;\n  border-radius: 9999px;\n  font-size: 0.7rem;\n  font-weight: 600;\n  line-height: 1.2;\n  white-space: nowrap;\n}\n.pe-time-chip-good {\n  background: rgba(16, 185, 129, 0.12);\n  color: #34d399;\n  border: 1px solid rgba(16, 185, 129, 0.25);\n}\n.pe-time-chip-warning {\n  background: rgba(245, 158, 11, 0.12);\n  color: #fbbf24;\n  border: 1px solid rgba(245, 158, 11, 0.25);\n}\n.pe-time-chip-critical {\n  background: rgba(239, 68, 68, 0.14);\n  color: #f87171;\n  border: 1px solid rgba(239, 68, 68, 0.28);\n}\n.pe-time-chip-muted {\n  background: rgba(148, 163, 184, 0.1);\n  color: #94a3b8;\n  border: 1px solid rgba(148, 163, 184, 0.2);\n}\n.pe-progress-track {\n  width: 100%;\n  height: 6px;\n  background: rgba(255, 255, 255, 0.08);\n  border-radius: 9999px;\n  overflow: hidden;\n  position: relative;\n}\n.pe-progress-fill {\n  height: 100%;\n  border-radius: 9999px;\n  transition: width 0.35s ease, background 0.35s ease;\n}\n.pe-progress-fill-good {\n  background:\n    linear-gradient(\n      90deg,\n      #10b981,\n      #059669);\n  box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);\n}\n.pe-progress-fill-warning {\n  background:\n    linear-gradient(\n      90deg,\n      #f59e0b,\n      #d97706);\n  box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);\n}\n.pe-progress-fill-critical {\n  background:\n    linear-gradient(\n      90deg,\n      #ef4444,\n      #dc2626);\n  box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);\n}\n.pe-preview-card {\n  background: rgba(15, 23, 42, 0.7);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  border-radius: 10px;\n  padding: 14px 16px;\n  margin: 14px 0;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n.pe-preview-title {\n  font-size: 0.72rem;\n  font-weight: 600;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-preview-row {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n.pe-badge {\n  display: inline-flex;\n  align-items: center;\n  gap: 5px;\n  padding: 3px 8px;\n  border-radius: 9999px;\n  font-size: 0.72rem;\n  font-weight: 500;\n  line-height: 1;\n}\n.pe-badge-dot {\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n}\n.pe-badge-active {\n  background: rgba(34, 197, 94, 0.12);\n  color: #4ade80;\n  border: 1px solid rgba(34, 197, 94, 0.25);\n}\n.pe-badge-active .pe-badge-dot {\n  background: #22c55e;\n}\n.pe-badge-suspended {\n  background: rgba(239, 68, 68, 0.12);\n  color: #f87171;\n  border: 1px solid rgba(239, 68, 68, 0.25);\n}\n.pe-badge-suspended .pe-badge-dot {\n  background: #ef4444;\n}\n.pe-badge-scheduled {\n  background: rgba(234, 179, 8, 0.12);\n  color: #facc15;\n  border: 1px solid rgba(234, 179, 8, 0.25);\n}\n.pe-badge-scheduled .pe-badge-dot {\n  background: #eab308;\n}\n.pe-badge-terminated {\n  background: rgba(148, 163, 184, 0.12);\n  color: #94a3b8;\n  border: 1px solid rgba(148, 163, 184, 0.25);\n}\n.pe-badge-terminated .pe-badge-dot {\n  background: #64748b;\n}\n.pe-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 6px;\n  padding: 7px 14px;\n  border-radius: 6px;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  cursor: pointer;\n  transition: all 0.15s ease;\n  border: none;\n  outline: none;\n  white-space: nowrap;\n}\n.pe-btn-primary {\n  background: var(--primary, #6366f1);\n  color: #ffffff;\n}\n.pe-btn-primary:hover:not(:disabled) {\n  opacity: 0.92;\n  transform: translateY(-0.5px);\n}\n.pe-btn-secondary {\n  background: var(--muted, rgba(255, 255, 255, 0.08));\n  color: var(--foreground, #ffffff);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n}\n.pe-btn-secondary:hover:not(:disabled) {\n  background: rgba(255, 255, 255, 0.12);\n}\n.pe-btn-danger {\n  background: rgba(239, 68, 68, 0.15);\n  color: #f87171;\n  border: 1px solid rgba(239, 68, 68, 0.25);\n}\n.pe-btn-danger:hover:not(:disabled) {\n  background: rgba(239, 68, 68, 0.25);\n}\n.pe-btn-preset {\n  padding: 3px 8px;\n  font-size: 0.72rem;\n  font-weight: 500;\n  border-radius: 5px;\n  background: rgba(255, 255, 255, 0.06);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  color: #cbd5e1;\n  cursor: pointer;\n  transition: all 0.12s ease;\n}\n.pe-btn-preset:hover {\n  background: rgba(255, 255, 255, 0.12);\n  color: #ffffff;\n  border-color: rgba(255, 255, 255, 0.25);\n}\n.pe-modal-overlay {\n  position: fixed;\n  inset: 0;\n  z-index: 99999;\n  background: rgba(0, 0, 0, 0.65);\n  backdrop-filter: blur(6px);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 20px;\n}\n.pe-modal {\n  position: relative;\n  width: 100%;\n  max-width: 560px;\n  background: var(--card, #1e293b);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n  border-radius: 12px;\n  padding: 24px;\n  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);\n  max-height: 92vh;\n  overflow-y: auto;\n}\n.pe-modal-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 18px;\n}\n.pe-form-group {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  margin-bottom: 16px;\n}\n.pe-form-label {\n  font-size: 0.8125rem;\n  font-weight: 500;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-checkbox-label {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 0.8125rem;\n  color: var(--foreground, #e2e8f0);\n  cursor: pointer;\n  user-select: none;\n}\n.pe-spinner {\n  width: 16px;\n  height: 16px;\n  border: 2px solid rgba(255, 255, 255, 0.2);\n  border-top-color: #ffffff;\n  border-radius: 50%;\n  animation: pe-spin 0.6s linear infinite;\n  display: inline-block;\n}\n@keyframes pe-spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.pe-slim-banner {\n  width: 100%;\n  margin-bottom: 16px;\n  background: var(--card, rgba(30, 41, 59, 0.45));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  border-radius: 8px;\n  overflow: hidden;\n  box-sizing: border-box;\n  transition: border-color 0.2s ease, background 0.2s ease;\n}\n.pe-slim-banner:hover {\n  border-color: rgba(255, 255, 255, 0.12);\n}\n.pe-slim-banner-good {\n  border-left: 3px solid #3b82f6;\n}\n.pe-slim-banner-warning {\n  border-left: 3px solid #f59e0b;\n}\n.pe-slim-banner-critical {\n  border-left: 3px solid #ef4444;\n}\n.pe-slim-banner-body {\n  padding: 9px 14px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  flex-wrap: wrap;\n}\n.pe-slim-banner-left {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.pe-slim-icon {\n  color: var(--muted-foreground, #94a3b8);\n  flex-shrink: 0;\n}\n.pe-slim-banner-good .pe-slim-icon {\n  color: #38bdf8;\n}\n.pe-slim-banner-warning .pe-slim-icon {\n  color: #fbbf24;\n}\n.pe-slim-banner-critical .pe-slim-icon {\n  color: #f87171;\n}\n.pe-slim-title {\n  font-size: 0.8125rem;\n  font-weight: 500;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-slim-date {\n  font-size: 0.8125rem;\n  font-weight: 600;\n  color: var(--foreground, #f8fafc);\n}\n.pe-slim-chip {\n  display: inline-flex;\n  align-items: center;\n  font-size: 0.7rem;\n  font-weight: 500;\n  line-height: 1;\n  padding: 2.5px 7px;\n  border-radius: 9999px;\n  background: rgba(255, 255, 255, 0.06);\n  border: 1px solid rgba(255, 255, 255, 0.08);\n  color: var(--muted-foreground, #94a3b8);\n  white-space: nowrap;\n}\n.pe-slim-chip-good {\n  background: rgba(59, 130, 246, 0.1);\n  border-color: rgba(59, 130, 246, 0.2);\n  color: #60a5fa;\n}\n.pe-slim-chip-warning {\n  background: rgba(245, 158, 11, 0.1);\n  border-color: rgba(245, 158, 11, 0.2);\n  color: #fbbf24;\n}\n.pe-slim-chip-critical {\n  background: rgba(239, 68, 68, 0.1);\n  border-color: rgba(239, 68, 68, 0.25);\n  color: #f87171;\n}\n.pe-slim-banner-right {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  font-size: 0.75rem;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-slim-term-notice {\n  font-size: 0.75rem;\n  color: #94a3b8;\n}\n.pe-slim-note {\n  font-size: 0.75rem;\n  color: #cbd5e1;\n  max-width: 220px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.pe-slim-track {\n  width: 100%;\n  height: 3px;\n  background: rgba(255, 255, 255, 0.04);\n  overflow: hidden;\n  position: relative;\n}\n.pe-slim-fill {\n  height: 100%;\n  transition: width 0.3s ease;\n}\n.pe-slim-fill-good {\n  background: #3b82f6;\n}\n.pe-slim-fill-warning {\n  background: #f59e0b;\n}\n.pe-slim-fill-critical {\n  background: #ef4444;\n}\n.pe-input-box {\n  position: relative !important;\n  display: flex !important;\n  align-items: center !important;\n}\n.pe-input-box svg.pe-input-icon,\nsvg.pe-input-icon,\n.pe-input-icon {\n  position: absolute !important;\n  left: 14px !important;\n  top: 50% !important;\n  transform: translateY(-50%) !important;\n  width: 16px !important;\n  height: 16px !important;\n  min-width: 16px !important;\n  min-height: 16px !important;\n  max-width: 16px !important;\n  max-height: 16px !important;\n  color: var(--muted-foreground, #94a3b8) !important;\n  pointer-events: none !important;\n  z-index: 10 !important;\n  display: block !important;\n  flex-shrink: 0 !important;\n}\n.pe-input-box input.pe-input,\n.pe-input-box input.pe-search-input,\ninput.pe-input,\ninput.pe-search-input {\n  width: 100% !important;\n  padding-left: 42px !important;\n  padding-right: 14px !important;\n  padding-top: 9px !important;\n  padding-bottom: 9px !important;\n  box-sizing: border-box !important;\n}\n.pe-tab-row {\n  display: flex;\n  gap: 8px;\n  margin-bottom: 18px;\n  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  padding-bottom: 12px;\n}\n.pe-tab-btn {\n  padding: 7px 14px;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  border-radius: 6px;\n  border: 1px solid transparent;\n  background: transparent;\n  color: var(--muted-foreground, #94a3b8);\n  cursor: pointer;\n  transition: all 0.15s ease;\n}\n.pe-tab-btn:hover {\n  color: var(--foreground, #ffffff);\n  background: rgba(255, 255, 255, 0.04);\n}\n.pe-tab-btn.pe-tab-active {\n  background: rgba(59, 130, 246, 0.12);\n  color: #60a5fa;\n  border-color: rgba(59, 130, 246, 0.3);\n  font-weight: 600;\n}\n.pe-tag-chip {\n  display: inline-flex;\n  align-items: center;\n  padding: 3px 8px;\n  font-size: 0.72rem;\n  font-family:\n    ui-monospace,\n    SFMono-Regular,\n    Menlo,\n    Monaco,\n    Consolas,\n    monospace;\n  background: rgba(15, 23, 42, 0.8);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  color: #38bdf8;\n  border-radius: 5px;\n  cursor: pointer;\n  transition: all 0.15s ease;\n}\n.pe-tag-chip:hover {\n  background: rgba(56, 189, 248, 0.15);\n  border-color: #38bdf8;\n  color: #ffffff;\n  transform: translateY(-1px);\n}\n.pe-email-preview {\n  background: #0f172a;\n  border: 1px solid #334155;\n  border-radius: 10px;\n  padding: 18px 20px;\n  margin-top: 14px;\n  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);\n}\n.pe-email-preview-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  border-bottom: 1px solid #334155;\n  padding-bottom: 12px;\n  margin-bottom: 14px;\n}\n.pe-email-preview-title {\n  font-size: 0.95rem;\n  font-weight: 700;\n  color: #f8fafc;\n  margin: 0 0 10px 0;\n}\n.pe-email-preview-body {\n  font-size: 0.82rem;\n  color: #cbd5e1;\n  line-height: 1.6;\n  white-space: pre-wrap;\n  background: #1e293b;\n  padding: 12px 14px;\n  border-radius: 8px;\n  border: 1px solid rgba(255, 255, 255, 0.05);\n}\n.pe-email-preview-meta {\n  width: 100%;\n  margin-top: 12px;\n  border-collapse: collapse;\n  font-size: 0.75rem;\n}\n.pe-email-preview-meta td {\n  padding: 5px 8px;\n  border-bottom: 1px solid #334155;\n}\n.pe-email-preview-btn {\n  display: inline-block;\n  padding: 8px 18px;\n  font-size: 0.8125rem;\n  font-weight: 600;\n  background: #3b82f6;\n  color: #ffffff;\n  border-radius: 6px;\n  text-decoration: none;\n  margin-top: 14px;\n  text-align: center;\n}\n";
                 document.head.appendChild(style);
-            } catch (e) {}
+            }
         }
+    } catch (e) {
+        console.error('Failed to inject style for server-suspension:', e);
     }
 })();
+
 var __defProp = Object.defineProperty;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __esm = (fn, res, err) => function __init() {
@@ -131,6 +127,19 @@ function SuspensionScreen() {
   const [bulkGraceDays, setBulkGraceDays] = useState2(7);
   const [bulkNotify, setBulkNotify] = useState2(true);
   const [selectedServerIds, setSelectedServerIds] = useState2([]);
+  const [emailModalOpen, setEmailModalOpen] = useState2(false);
+  const [activeMailTab, setActiveMailTab] = useState2("suspension");
+  const [mailSuspEnabled, setMailSuspEnabled] = useState2(true);
+  const [mailSuspSubject, setMailSuspSubject] = useState2("[Notice] Server Suspended: {server_name}");
+  const [mailSuspBody, setMailSuspBody] = useState2("");
+  const [mailWarnEnabled, setMailWarnEnabled] = useState2(true);
+  const [mailWarnSubject, setMailWarnSubject] = useState2("[Warning] Your server {server_name} expires soon");
+  const [mailWarnBody, setMailWarnBody] = useState2("");
+  const [mailTermEnabled, setMailTermEnabled] = useState2(true);
+  const [mailTermSubject, setMailTermSubject] = useState2("[Final Notice] Server Terminated: {server_name}");
+  const [mailTermBody, setMailTermBody] = useState2("");
+  const [testEmailAddress, setTestEmailAddress] = useState2("");
+  const [testEmailSending, setTestEmailSending] = useState2(false);
   const overviewQuery = useQuery2({
     queryKey: ["admin-suspension-overview"],
     queryFn: async () => {
@@ -220,6 +229,105 @@ function SuspensionScreen() {
     },
     onError: (err) => toast.error(err.message)
   });
+  const mailTemplatesQuery = useQuery2({
+    queryKey: ["admin-suspension-mail-templates"],
+    queryFn: async () => {
+      const res = await fetch("/api/admin/extensions/server-suspension/mail-templates");
+      if (!res.ok) throw new Error("Failed to load email notification templates");
+      return res.json();
+    },
+    enabled: emailModalOpen
+  });
+  useEffect2(() => {
+    if (mailTemplatesQuery.data) {
+      const d = mailTemplatesQuery.data;
+      setMailSuspEnabled(Boolean(d.mail_notifications_enabled));
+      if (d.mail_subject) setMailSuspSubject(d.mail_subject);
+      if (d.mail_body) setMailSuspBody(d.mail_body);
+      setMailWarnEnabled(Boolean(d.warning_mail_enabled));
+      if (d.warning_mail_subject) setMailWarnSubject(d.warning_mail_subject);
+      if (d.warning_mail_body) setMailWarnBody(d.warning_mail_body);
+      setMailTermEnabled(Boolean(d.termination_mail_enabled));
+      if (d.termination_mail_subject) setMailTermSubject(d.termination_mail_subject);
+      if (d.termination_mail_body) setMailTermBody(d.termination_mail_body);
+      if (!testEmailAddress && d.admin_email) {
+        setTestEmailAddress(d.admin_email);
+      }
+    }
+  }, [mailTemplatesQuery.data]);
+  const saveMailTemplatesMutation = useMutation({
+    mutationFn: async () => {
+      const payload = {
+        mail_notifications_enabled: mailSuspEnabled,
+        mail_subject: mailSuspSubject,
+        mail_body: mailSuspBody,
+        warning_mail_enabled: mailWarnEnabled,
+        warning_mail_subject: mailWarnSubject,
+        warning_mail_body: mailWarnBody,
+        termination_mail_enabled: mailTermEnabled,
+        termination_mail_subject: mailTermSubject,
+        termination_mail_body: mailTermBody
+      };
+      const res = await fetch("/api/admin/extensions/server-suspension/mail-templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to save email templates");
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Email templates saved successfully");
+      queryClient.invalidateQueries({ queryKey: ["admin-suspension-mail-templates"] });
+    },
+    onError: (err) => toast.error(err.message)
+  });
+  const handleSendTestEmail = async () => {
+    if (!testEmailAddress.trim()) {
+      toast.error("Please enter a destination email address for the test.");
+      return;
+    }
+    setTestEmailSending(true);
+    try {
+      let subject = mailSuspSubject;
+      let body = mailSuspBody;
+      if (activeMailTab === "warning") {
+        subject = mailWarnSubject;
+        body = mailWarnBody;
+      } else if (activeMailTab === "termination") {
+        subject = mailTermSubject;
+        body = mailTermBody;
+      }
+      const res = await fetch("/api/admin/extensions/server-suspension/test-mail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          template_type: activeMailTab,
+          subject,
+          body,
+          email: testEmailAddress.trim()
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to deliver test email");
+      toast.success(data.message || "Test email dispatched successfully!");
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setTestEmailSending(false);
+    }
+  };
+  const insertPlaceholder = (tag) => {
+    if (activeMailTab === "suspension") {
+      setMailSuspBody((prev) => prev + (prev.endsWith(" ") || prev === "" ? "" : " ") + tag);
+    } else if (activeMailTab === "warning") {
+      setMailWarnBody((prev) => prev + (prev.endsWith(" ") || prev === "" ? "" : " ") + tag);
+    } else {
+      setMailTermBody((prev) => prev + (prev.endsWith(" ") || prev === "" ? "" : " ") + tag);
+    }
+    toast.info(`Inserted placeholder ${tag}`);
+  };
   const openEdit = (server) => {
     setSelectedServerId(server.id);
     setEditSuspDate(server.suspension_date ? server.suspension_date.slice(0, 16) : "");
@@ -335,6 +443,22 @@ function SuspensionScreen() {
             disabled: processDueMutation.isPending,
             onClick: () => processDueMutation.mutate(),
             children: processDueMutation.isPending ? /* @__PURE__ */ jsx2("span", { className: "pe-spinner" }) : "Process Due Schedules"
+          }
+        ),
+        /* @__PURE__ */ jsxs2(
+          "button",
+          {
+            type: "button",
+            className: "pe-btn pe-btn-secondary",
+            onClick: () => setEmailModalOpen(true),
+            style: { display: "inline-flex", alignItems: "center", gap: 6 },
+            children: [
+              /* @__PURE__ */ jsxs2("svg", { width: "15", height: "15", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [
+                /* @__PURE__ */ jsx2("path", { d: "M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" }),
+                /* @__PURE__ */ jsx2("polyline", { points: "22,6 12,13 2,6" })
+              ] }),
+              "Email Templates"
+            ]
           }
         )
       ] })
@@ -822,7 +946,223 @@ function SuspensionScreen() {
           }
         )
       ] })
-    ] }) })
+    ] }) }),
+    emailModalOpen && /* @__PURE__ */ jsx2("div", { className: "pe-modal-overlay", onClick: () => setEmailModalOpen(false), children: /* @__PURE__ */ jsxs2(
+      "div",
+      {
+        className: "pe-modal",
+        style: { maxWidth: 760, maxHeight: "90vh", overflowY: "auto" },
+        onClick: (e) => e.stopPropagation(),
+        children: [
+          /* @__PURE__ */ jsxs2("div", { className: "pe-modal-header", style: { marginBottom: 16 }, children: [
+            /* @__PURE__ */ jsxs2("div", { children: [
+              /* @__PURE__ */ jsx2("h3", { className: "pe-title", style: { fontSize: "1.15rem" }, children: "Email Notification Templates" }),
+              /* @__PURE__ */ jsx2("p", { style: { fontSize: "0.8rem", color: "#94a3b8", margin: "4px 0 0 0" }, children: "Configure customized emails delivered to clients when servers expire, suspend, or terminate." })
+            ] }),
+            /* @__PURE__ */ jsx2(
+              "button",
+              {
+                type: "button",
+                style: { background: "transparent", border: "none", color: "#94a3b8", fontSize: "1.4rem", cursor: "pointer" },
+                onClick: () => setEmailModalOpen(false),
+                children: "\xD7"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxs2("div", { className: "pe-tab-row", children: [
+            /* @__PURE__ */ jsx2(
+              "button",
+              {
+                type: "button",
+                className: `pe-tab-btn ${activeMailTab === "suspension" ? "pe-tab-active" : ""}`,
+                onClick: () => setActiveMailTab("suspension"),
+                children: "Suspension Notice"
+              }
+            ),
+            /* @__PURE__ */ jsx2(
+              "button",
+              {
+                type: "button",
+                className: `pe-tab-btn ${activeMailTab === "warning" ? "pe-tab-active" : ""}`,
+                onClick: () => setActiveMailTab("warning"),
+                children: "Expiration Warning (24h)"
+              }
+            ),
+            /* @__PURE__ */ jsx2(
+              "button",
+              {
+                type: "button",
+                className: `pe-tab-btn ${activeMailTab === "termination" ? "pe-tab-active" : ""}`,
+                onClick: () => setActiveMailTab("termination"),
+                children: "Termination Notice"
+              }
+            )
+          ] }),
+          (() => {
+            const isSusp = activeMailTab === "suspension";
+            const isWarn = activeMailTab === "warning";
+            const enabled = isSusp ? mailSuspEnabled : isWarn ? mailWarnEnabled : mailTermEnabled;
+            const setEnabled = isSusp ? setMailSuspEnabled : isWarn ? setMailWarnEnabled : setMailTermEnabled;
+            const subject = isSusp ? mailSuspSubject : isWarn ? mailWarnSubject : mailTermSubject;
+            const setSubject = isSusp ? setMailSuspSubject : isWarn ? setMailWarnSubject : setMailTermSubject;
+            const body = isSusp ? mailSuspBody : isWarn ? mailWarnBody : mailTermBody;
+            const setBody = isSusp ? setMailSuspBody : isWarn ? setMailWarnBody : setMailTermBody;
+            const title = isSusp ? "Server Suspension Notice" : isWarn ? "Expiration Warning Notice" : "Server Termination Notice";
+            const desc = isSusp ? "Delivered immediately when a server reaches its scheduled expiration date and is suspended." : isWarn ? "Delivered 24 hours prior to expiration to notify owners to renew their server in advance." : "Delivered when a server exceeds its grace period and is flagged for permanent termination.";
+            const badge = isSusp ? "SUSPENDED" : isWarn ? "EXPIRING SOON" : "TERMINATED";
+            const badgeBg = isSusp ? "#ef4444" : isWarn ? "#f59e0b" : "#991b1b";
+            const previewSubj = subject.replace(/{server_name}/gi, "Survival SMP Production").replace(/{username}/gi, "Steve").replace(/{server_id}/gi, "142");
+            const previewBody = body.replace(/{server_name}/gi, "Survival SMP Production").replace(/{username}/gi, "Steve").replace(/{server_id}/gi, "142").replace(/{server_uuid}/gi, "a8f39b1c").replace(/{suspension_date}/gi, "Tomorrow, 18:00").replace(/{termination_date}/gi, "In 7 days, 18:00").replace(/{panel_url}/gi, window.location.origin);
+            return /* @__PURE__ */ jsxs2("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: [
+              /* @__PURE__ */ jsxs2("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(15, 23, 42, 0.6)", padding: "10px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)" }, children: [
+                /* @__PURE__ */ jsxs2("div", { children: [
+                  /* @__PURE__ */ jsx2("span", { style: { fontSize: "0.875rem", fontWeight: 600, color: "#f8fafc" }, children: title }),
+                  /* @__PURE__ */ jsx2("p", { style: { fontSize: "0.75rem", color: "#94a3b8", margin: "2px 0 0 0" }, children: desc })
+                ] }),
+                /* @__PURE__ */ jsxs2("label", { className: "pe-checkbox-label", style: { margin: 0 }, children: [
+                  /* @__PURE__ */ jsx2(
+                    "input",
+                    {
+                      type: "checkbox",
+                      checked: enabled,
+                      onChange: (e) => setEnabled(e.target.checked)
+                    }
+                  ),
+                  /* @__PURE__ */ jsx2("span", { style: { fontSize: "0.8125rem" }, children: "Active" })
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxs2("div", { className: "pe-form-group", children: [
+                /* @__PURE__ */ jsx2("label", { className: "pe-form-label", children: "Email Subject" }),
+                /* @__PURE__ */ jsx2(
+                  "input",
+                  {
+                    type: "text",
+                    className: "pe-input",
+                    value: subject,
+                    onChange: (e) => setSubject(e.target.value),
+                    placeholder: "e.g. [Notice] Server Suspended: {server_name}"
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ jsxs2("div", { className: "pe-form-group", children: [
+                /* @__PURE__ */ jsxs2("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }, children: [
+                  /* @__PURE__ */ jsx2("label", { className: "pe-form-label", style: { marginBottom: 0 }, children: "Email Body Template" }),
+                  /* @__PURE__ */ jsx2("span", { style: { fontSize: "0.72rem", color: "#94a3b8" }, children: "Click placeholder chip to insert" })
+                ] }),
+                /* @__PURE__ */ jsx2("div", { style: { display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 8 }, children: ["{username}", "{server_name}", "{server_id}", "{server_uuid}", "{suspension_date}", "{termination_date}", "{panel_url}"].map((tag) => /* @__PURE__ */ jsx2(
+                  "button",
+                  {
+                    type: "button",
+                    className: "pe-tag-chip",
+                    onClick: () => insertPlaceholder(tag),
+                    title: `Click to append ${tag}`,
+                    children: tag
+                  },
+                  tag
+                )) }),
+                /* @__PURE__ */ jsx2(
+                  "textarea",
+                  {
+                    className: "pe-input",
+                    style: { minHeight: 130, fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", fontSize: "0.8125rem", lineHeight: "1.5" },
+                    value: body,
+                    onChange: (e) => setBody(e.target.value),
+                    placeholder: "Compose email template message..."
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ jsxs2("div", { children: [
+                /* @__PURE__ */ jsx2("label", { className: "pe-form-label", style: { marginBottom: 4 }, children: "Live Email Preview (Sample Client View)" }),
+                /* @__PURE__ */ jsxs2("div", { className: "pe-email-preview", children: [
+                  /* @__PURE__ */ jsxs2("div", { className: "pe-email-preview-header", children: [
+                    /* @__PURE__ */ jsx2("span", { style: { fontSize: "0.9rem", fontWeight: 700, color: "#f8fafc" }, children: "Pterodactyl Panel" }),
+                    /* @__PURE__ */ jsx2(
+                      "span",
+                      {
+                        style: {
+                          padding: "3px 8px",
+                          fontSize: "0.68rem",
+                          fontWeight: 700,
+                          background: badgeBg,
+                          color: "#ffffff",
+                          borderRadius: 4,
+                          letterSpacing: "0.04em"
+                        },
+                        children: badge
+                      }
+                    )
+                  ] }),
+                  /* @__PURE__ */ jsx2("h4", { className: "pe-email-preview-title", children: previewSubj || "(No subject)" }),
+                  /* @__PURE__ */ jsx2("div", { className: "pe-email-preview-body", children: previewBody || "(No message body provided)" }),
+                  /* @__PURE__ */ jsx2("table", { className: "pe-email-preview-meta", children: /* @__PURE__ */ jsxs2("tbody", { children: [
+                    /* @__PURE__ */ jsxs2("tr", { children: [
+                      /* @__PURE__ */ jsx2("td", { style: { color: "#94a3b8" }, children: "Target Server:" }),
+                      /* @__PURE__ */ jsx2("td", { style: { textAlign: "right", color: "#f1f5f9", fontWeight: 600 }, children: "Survival SMP Production (#142)" })
+                    ] }),
+                    /* @__PURE__ */ jsxs2("tr", { children: [
+                      /* @__PURE__ */ jsx2("td", { style: { color: "#94a3b8" }, children: "Effective Date:" }),
+                      /* @__PURE__ */ jsx2("td", { style: { textAlign: "right", color: "#f1f5f9", fontWeight: 600 }, children: "Tomorrow, 18:00" })
+                    ] })
+                  ] }) }),
+                  /* @__PURE__ */ jsx2("div", { style: { textAlign: "center", marginTop: 14 }, children: /* @__PURE__ */ jsx2("span", { className: "pe-email-preview-btn", children: "Open Control Panel \u2192" }) })
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxs2("div", { style: { background: "rgba(15, 23, 42, 0.5)", padding: "12px 14px", borderRadius: 8, border: "1px solid #334155" }, children: [
+                /* @__PURE__ */ jsxs2("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }, children: [
+                  /* @__PURE__ */ jsx2("span", { style: { fontSize: "0.8rem", fontWeight: 600, color: "#e2e8f0" }, children: "Send Test Email" }),
+                  /* @__PURE__ */ jsx2("span", { style: { fontSize: "0.72rem", color: "#94a3b8" }, children: "Verifies mail transport configuration & design" })
+                ] }),
+                /* @__PURE__ */ jsxs2("div", { style: { display: "flex", gap: 8 }, children: [
+                  /* @__PURE__ */ jsx2(
+                    "input",
+                    {
+                      type: "email",
+                      className: "pe-input",
+                      placeholder: "admin@example.com",
+                      value: testEmailAddress,
+                      onChange: (e) => setTestEmailAddress(e.target.value),
+                      style: { flex: 1, fontSize: "0.8125rem" }
+                    }
+                  ),
+                  /* @__PURE__ */ jsx2(
+                    "button",
+                    {
+                      type: "button",
+                      className: "pe-btn pe-btn-secondary",
+                      disabled: testEmailSending || !testEmailAddress.trim(),
+                      onClick: handleSendTestEmail,
+                      style: { whiteSpace: "nowrap" },
+                      children: testEmailSending ? /* @__PURE__ */ jsx2("span", { className: "pe-spinner" }) : "Send Test"
+                    }
+                  )
+                ] })
+              ] })
+            ] });
+          })(),
+          /* @__PURE__ */ jsxs2("div", { style: { display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 24, borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 14 }, children: [
+            /* @__PURE__ */ jsx2(
+              "button",
+              {
+                type: "button",
+                className: "pe-btn pe-btn-secondary",
+                onClick: () => setEmailModalOpen(false),
+                children: "Close"
+              }
+            ),
+            /* @__PURE__ */ jsx2(
+              "button",
+              {
+                type: "button",
+                className: "pe-btn pe-btn-primary",
+                disabled: saveMailTemplatesMutation.isPending,
+                onClick: () => saveMailTemplatesMutation.mutate(),
+                children: saveMailTemplatesMutation.isPending ? /* @__PURE__ */ jsx2("span", { className: "pe-spinner" }) : "Save All Templates"
+              }
+            )
+          ] })
+        ]
+      }
+    ) })
   ] });
 }
 var init_SuspensionScreen = __esm({

@@ -584,3 +584,110 @@ input.pe-search-input {
   padding-bottom: 9px !important;
   box-sizing: border-box !important;
 }
+.pe-tab-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  padding-bottom: 12px;
+}
+.pe-tab-btn {
+  padding: 7px 14px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted-foreground, #94a3b8);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.pe-tab-btn:hover {
+  color: var(--foreground, #ffffff);
+  background: rgba(255, 255, 255, 0.04);
+}
+.pe-tab-btn.pe-tab-active {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.3);
+  font-weight: 600;
+}
+.pe-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    monospace;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #38bdf8;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.pe-tag-chip:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: #38bdf8;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+.pe-email-preview {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-top: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+.pe-email-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+}
+.pe-email-preview-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0 0 10px 0;
+}
+.pe-email-preview-body {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  background: #1e293b;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.pe-email-preview-meta {
+  width: 100%;
+  margin-top: 12px;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+.pe-email-preview-meta td {
+  padding: 5px 8px;
+  border-bottom: 1px solid #334155;
+}
+.pe-email-preview-btn {
+  display: inline-block;
+  padding: 8px 18px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: #3b82f6;
+  color: #ffffff;
+  border-radius: 6px;
+  text-decoration: none;
+  margin-top: 14px;
+  text-align: center;
+}
