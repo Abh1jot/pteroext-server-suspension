@@ -549,3 +549,38 @@
 .pe-slim-fill-critical {
   background: #ef4444;
 }
+.pe-input-box {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+}
+.pe-input-box svg.pe-input-icon,
+svg.pe-input-icon,
+.pe-input-icon {
+  position: absolute !important;
+  left: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  color: var(--muted-foreground, #94a3b8) !important;
+  pointer-events: none !important;
+  z-index: 10 !important;
+  display: block !important;
+  flex-shrink: 0 !important;
+}
+.pe-input-box input.pe-input,
+.pe-input-box input.pe-search-input,
+input.pe-input,
+input.pe-search-input {
+  width: 100% !important;
+  padding-left: 42px !important;
+  padding-right: 14px !important;
+  padding-top: 9px !important;
+  padding-bottom: 9px !important;
+  box-sizing: border-box !important;
+}
