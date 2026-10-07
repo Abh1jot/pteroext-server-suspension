@@ -21,6 +21,13 @@ class ServerSuspensionProvider extends ExtensionProvider
             ProcessSuspensionsCommand::class,
         ]);
 
+        $this->app->booted(function () {
+            if ($this->app->runningInConsole() && class_exists(\Illuminate\Console\Scheduling\Schedule::class)) {
+                $schedule = $this->app->make(\Illuminate\Console\Scheduling\Schedule::class);
+                $schedule->command(ProcessSuspensionsCommand::class)->everyMinute()->withoutOverlapping();
+            }
+        });
+
         $this->registerPermissions('Server Suspension', [
             'manage' => 'Manage automated server suspension and expiration schedules',
         ]);
