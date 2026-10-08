@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@pterodactyl/sdk';
 
@@ -151,6 +151,68 @@ export default function SuspensionScreen() {
     const [bulkGraceDays, setBulkGraceDays] = useState(7);
     const [bulkNotify, setBulkNotify] = useState(true);
     const [selectedServerIds, setSelectedServerIds] = useState<number[]>([]);
+
+    // Table scrolling & drag states
+    const tableCardRef = useRef<HTMLDivElement>(null);
+    const isDraggingRef = useRef(false);
+    const startXRef = useRef(0);
+    const scrollLeftRef = useRef(0);
+    const [isDragging, setIsDragging] = useState(false);
+
+    const scrollTable = (direction: 'left' | 'right') => {
+        if (!tableCardRef.current) return;
+        const amount = direction === 'left' ? -350 : 350;
+        tableCardRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+    };
+
+    const handleTableWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+        const el = tableCardRef.current;
+        if (!el) return;
+
+        // If deltaX is present (native touchpad/trackpad), let browser handle it natively
+        if (Math.abs(e.deltaX) > 0) return;
+
+        // Translate vertical wheel on mouse to horizontal scroll if table has overflow
+        if (Math.abs(e.deltaY) > 0) {
+            const maxScroll = el.scrollWidth - el.clientWidth;
+            if (maxScroll <= 0) return;
+
+            const canScrollLeft = el.scrollLeft > 0;
+            const canScrollRight = el.scrollLeft < maxScroll - 1;
+
+            if ((e.deltaY > 0 && canScrollRight) || (e.deltaY < 0 && canScrollLeft)) {
+                el.scrollLeft += e.deltaY;
+                e.preventDefault();
+            }
+        }
+    };
+
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (e.button !== 0) return;
+        const target = e.target as HTMLElement;
+        if (target.closest('button, input, select, a, .pe-btn, .pe-quick-edit-btn, .pe-time-clickable')) {
+            return;
+        }
+        if (!tableCardRef.current) return;
+
+        isDraggingRef.current = true;
+        startXRef.current = e.pageX - tableCardRef.current.offsetLeft;
+        scrollLeftRef.current = tableCardRef.current.scrollLeft;
+        setIsDragging(true);
+    };
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isDraggingRef.current || !tableCardRef.current) return;
+        e.preventDefault();
+        const x = e.pageX - tableCardRef.current.offsetLeft;
+        const walk = (x - startXRef.current) * 1.4;
+        tableCardRef.current.scrollLeft = scrollLeftRef.current - walk;
+    };
+
+    const handleMouseUp = () => {
+        isDraggingRef.current = false;
+        setIsDragging(false);
+    };
 
     // Email Template Modal states
     const [emailModalOpen, setEmailModalOpen] = useState(false);
@@ -590,24 +652,71 @@ export default function SuspensionScreen() {
                 </select>
             </div>
 
+            {/* Table Meta Bar with Scroll Controls */}
+            <div className="pe-table-meta-bar">
+                <div className="pe-table-meta-count">
+                    Showing <strong>{filteredServers.length}</strong> of <strong>{servers.length}</strong> panel servers
+                </div>
+                <div className="pe-table-scroll-controls">
+                    <span className="pe-scroll-hint">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                            <polyline points="12 19 5 12 12 5" />
+                        </svg>
+                        Scroll table:
+                    </span>
+                    <button
+                        type="button"
+                        className="pe-scroll-btn"
+                        title="Scroll table left"
+                        onClick={() => scrollTable('left')}
+                    >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                        Left
+                    </button>
+                    <button
+                        type="button"
+                        className="pe-scroll-btn"
+                        title="Scroll table right"
+                        onClick={() => scrollTable('right')}
+                    >
+                        Right
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
             {/* Data Table */}
-            <div className="pe-table-card">
+            <div
+                ref={tableCardRef}
+                className={`pe-table-card ${isDragging ? 'pe-table-dragging' : ''}`}
+                onWheel={handleTableWheel}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+            >
                 <table className="pe-table">
                     <thead>
                         <tr>
-                            <th style={{ width: 40, textAlign: 'center' }}>
+                            <th style={{ width: 44, textAlign: 'center' }}>
                                 <input
                                     type="checkbox"
                                     checked={filteredServers.length > 0 && selectedServerIds.length === filteredServers.length}
                                     onChange={selectAllFiltered}
                                 />
                             </th>
-                            <th>Server</th>
-                            <th>Node / Owner</th>
-                            <th>Status</th>
+                            <th style={{ minWidth: 170 }}>Server</th>
+                            <th style={{ minWidth: 170 }}>Node / Owner</th>
+                            <th style={{ minWidth: 110 }}>Status</th>
                             <th style={{ minWidth: 220 }}>Suspension Date & Time Left</th>
                             <th style={{ minWidth: 200 }}>Termination Grace</th>
-                            <th style={{ textAlign: 'right' }}>Actions</th>
+                            <th className="pe-col-sticky-right" style={{ minWidth: 250, textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -641,9 +750,25 @@ export default function SuspensionScreen() {
                                             />
                                         </td>
                                         <td>
-                                            <div style={{ fontWeight: 600 }}>{server.name}</div>
-                                            <div style={{ fontSize: '0.72rem', color: 'var(--muted-foreground, #94a3b8)', fontFamily: 'monospace' }}>
-                                                {server.identifier}
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+                                                <div>
+                                                    <div style={{ fontWeight: 600 }}>{server.name}</div>
+                                                    <div style={{ fontSize: '0.72rem', color: 'var(--muted-foreground, #94a3b8)', fontFamily: 'monospace' }}>
+                                                        {server.identifier}
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className="pe-quick-edit-btn"
+                                                    title={hasSchedule ? 'Edit Expiration Schedule' : 'Set Suspension Date'}
+                                                    onClick={() => openEdit(server)}
+                                                >
+                                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                    </svg>
+                                                    <span>{hasSchedule ? 'Edit' : 'Set Date'}</span>
+                                                </button>
                                             </div>
                                         </td>
                                         <td>
@@ -674,7 +799,11 @@ export default function SuspensionScreen() {
                                         {/* Suspension Date & Time Left Progress Bar */}
                                         <td>
                                             {suspTimeInfo.hasDate ? (
-                                                <div className="pe-time-cell">
+                                                <div
+                                                    className="pe-time-cell pe-time-clickable"
+                                                    title="Click to edit suspension schedule"
+                                                    onClick={() => openEdit(server)}
+                                                >
                                                     <div className="pe-time-header">
                                                         <span className="pe-time-date">{suspTimeInfo.formattedDate}</span>
                                                         <span className={`pe-time-chip pe-time-chip-${suspTimeInfo.urgency}`}>
@@ -692,8 +821,15 @@ export default function SuspensionScreen() {
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                                    <span className="pe-time-chip pe-time-chip-muted">No Expiration Set</span>
+                                                <div
+                                                    className="pe-time-cell pe-time-clickable"
+                                                    title="Click to set suspension date"
+                                                    onClick={() => openEdit(server)}
+                                                    style={{ display: 'inline-flex' }}
+                                                >
+                                                    <span className="pe-time-chip pe-time-chip-muted pe-time-chip-hoverable">
+                                                        + Set Expiration Date
+                                                    </span>
                                                 </div>
                                             )}
                                         </td>
@@ -701,7 +837,11 @@ export default function SuspensionScreen() {
                                         {/* Permanent Termination Grace Period */}
                                         <td>
                                             {termTimeInfo.hasDate ? (
-                                                <div className="pe-time-cell">
+                                                <div
+                                                    className="pe-time-cell pe-time-clickable"
+                                                    title="Click to edit termination grace period"
+                                                    onClick={() => openEdit(server)}
+                                                >
                                                     <div className="pe-time-header">
                                                         <span className="pe-time-date" style={{ color: '#f87171' }}>{termTimeInfo.formattedDate}</span>
                                                         <span className={`pe-time-chip pe-time-chip-${termTimeInfo.urgency}`}>
@@ -723,12 +863,12 @@ export default function SuspensionScreen() {
                                             )}
                                         </td>
 
-                                        <td>
-                                            <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
+                                        {/* Actions Column (Sticky on Right) */}
+                                        <td className="pe-col-sticky-right">
+                                            <div className="pe-actions-wrap">
                                                 <button
                                                     type="button"
-                                                    className="pe-btn pe-btn-primary"
-                                                    style={{ padding: '6px 12px', fontSize: '0.8125rem', fontWeight: 600 }}
+                                                    className="pe-btn pe-btn-primary pe-btn-sm"
                                                     onClick={() => openEdit(server)}
                                                 >
                                                     {hasSchedule ? 'Edit Expiration' : 'Set Suspension Date'}
@@ -736,8 +876,7 @@ export default function SuspensionScreen() {
                                                 {hasSchedule && (
                                                     <button
                                                         type="button"
-                                                        className="pe-btn pe-btn-secondary"
-                                                        style={{ padding: '6px 10px', fontSize: '0.75rem' }}
+                                                        className="pe-btn pe-btn-secondary pe-btn-sm"
                                                         title="Remove scheduled suspension & termination"
                                                         onClick={() => actionMutation.mutate({ server_id: server.id, action: 'cancel' })}
                                                     >
@@ -747,8 +886,7 @@ export default function SuspensionScreen() {
                                                 {isSuspended ? (
                                                     <button
                                                         type="button"
-                                                        className="pe-btn pe-btn-secondary"
-                                                        style={{ padding: '6px 10px', fontSize: '0.75rem' }}
+                                                        className="pe-btn pe-btn-secondary pe-btn-sm"
                                                         disabled={actionMutation.isPending}
                                                         onClick={() => actionMutation.mutate({ server_id: server.id, action: 'unsuspend' })}
                                                     >
@@ -757,8 +895,7 @@ export default function SuspensionScreen() {
                                                 ) : (
                                                     <button
                                                         type="button"
-                                                        className="pe-btn pe-btn-danger"
-                                                        style={{ padding: '6px 10px', fontSize: '0.75rem' }}
+                                                        className="pe-btn pe-btn-danger pe-btn-sm"
                                                         disabled={actionMutation.isPending}
                                                         onClick={() => actionMutation.mutate({ server_id: server.id, action: 'suspend' })}
                                                     >

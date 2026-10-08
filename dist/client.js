@@ -13,7 +13,7 @@
             try {
                 const style = document.createElement('style');
                 style.id = id + '-inline';
-                style.textContent = "/* src/client/styles.css */\n.pe-container {\n  width: 100%;\n  margin: 0 auto;\n  padding-top: 24px;\n  padding-bottom: 32px;\n  font-family: inherit;\n  color: var(--foreground, #f8fafc);\n  box-sizing: border-box;\n}\n.pe-container *,\n.pe-container *::before,\n.pe-container *::after {\n  box-sizing: border-box;\n}\n.pe-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 16px;\n  margin-bottom: 24px;\n  flex-wrap: wrap;\n}\n.pe-title-wrap {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n.pe-title {\n  font-size: 1.25rem;\n  font-weight: 600;\n  color: var(--foreground, #ffffff);\n  margin: 0;\n  letter-spacing: -0.015em;\n}\n.pe-subtitle {\n  font-size: 0.8125rem;\n  color: var(--muted-foreground, #94a3b8);\n  margin: 0;\n}\n.pe-stats-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: 14px;\n  margin-bottom: 24px;\n}\n.pe-stat-card {\n  background: var(--card, rgba(30, 41, 59, 0.45));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  border-radius: 10px;\n  padding: 16px 20px;\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n}\n.pe-stat-val {\n  font-size: 1.5rem;\n  font-weight: 700;\n  color: var(--foreground, #ffffff);\n  line-height: 1.2;\n}\n.pe-stat-label {\n  font-size: 0.75rem;\n  font-weight: 500;\n  color: var(--muted-foreground, #94a3b8);\n  text-transform: uppercase;\n  letter-spacing: 0.04em;\n}\n.pe-toolbar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  margin-bottom: 18px;\n  flex-wrap: wrap;\n}\n.pe-input-box {\n  position: relative;\n  flex: 1;\n  min-width: 240px;\n}\n.pe-input {\n  width: 100%;\n  padding: 8px 14px 8px 36px;\n  background: var(--input, rgba(15, 23, 42, 0.6));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n  border-radius: 8px;\n  color: var(--foreground, #f8fafc);\n  font-size: 0.84375rem;\n  outline: none;\n  transition: border-color 0.15s ease, box-shadow 0.15s ease;\n}\n.pe-input:focus {\n  border-color: var(--ring, #6366f1);\n  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);\n}\n.pe-input-icon {\n  position: absolute;\n  left: 11px;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 15px;\n  height: 15px;\n  color: var(--muted-foreground, #64748b);\n  pointer-events: none;\n}\n.pe-select {\n  padding: 8px 12px;\n  background: var(--input, rgba(15, 23, 42, 0.6));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n  border-radius: 8px;\n  color: var(--foreground, #f8fafc);\n  font-size: 0.84375rem;\n  outline: none;\n  cursor: pointer;\n}\n.pe-select:focus {\n  border-color: var(--ring, #6366f1);\n}\n.pe-table-card {\n  background: var(--card, rgba(30, 41, 59, 0.4));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  border-radius: 10px;\n  overflow-x: auto;\n}\n.pe-table {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.84375rem;\n  text-align: left;\n}\n.pe-table th {\n  padding: 12px 16px;\n  background: rgba(0, 0, 0, 0.15);\n  color: var(--muted-foreground, #94a3b8);\n  font-weight: 600;\n  font-size: 0.75rem;\n  text-transform: uppercase;\n  letter-spacing: 0.04em;\n  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.06));\n  white-space: nowrap;\n}\n.pe-table td {\n  padding: 12px 16px;\n  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.04));\n  color: var(--foreground, #e2e8f0);\n  vertical-align: middle;\n}\n.pe-table tr:hover td {\n  background: rgba(255, 255, 255, 0.02);\n}\n.pe-time-cell {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  min-width: 190px;\n}\n.pe-time-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n}\n.pe-time-date {\n  font-size: 0.8125rem;\n  font-weight: 600;\n  color: #f8fafc;\n  white-space: nowrap;\n}\n.pe-time-chip {\n  display: inline-flex;\n  align-items: center;\n  gap: 4px;\n  padding: 2px 7px;\n  border-radius: 9999px;\n  font-size: 0.7rem;\n  font-weight: 600;\n  line-height: 1.2;\n  white-space: nowrap;\n}\n.pe-time-chip-good {\n  background: rgba(16, 185, 129, 0.12);\n  color: #34d399;\n  border: 1px solid rgba(16, 185, 129, 0.25);\n}\n.pe-time-chip-warning {\n  background: rgba(245, 158, 11, 0.12);\n  color: #fbbf24;\n  border: 1px solid rgba(245, 158, 11, 0.25);\n}\n.pe-time-chip-critical {\n  background: rgba(239, 68, 68, 0.14);\n  color: #f87171;\n  border: 1px solid rgba(239, 68, 68, 0.28);\n}\n.pe-time-chip-muted {\n  background: rgba(148, 163, 184, 0.1);\n  color: #94a3b8;\n  border: 1px solid rgba(148, 163, 184, 0.2);\n}\n.pe-progress-track {\n  width: 100%;\n  height: 6px;\n  background: rgba(255, 255, 255, 0.08);\n  border-radius: 9999px;\n  overflow: hidden;\n  position: relative;\n}\n.pe-progress-fill {\n  height: 100%;\n  border-radius: 9999px;\n  transition: width 0.35s ease, background 0.35s ease;\n}\n.pe-progress-fill-good {\n  background:\n    linear-gradient(\n      90deg,\n      #10b981,\n      #059669);\n  box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);\n}\n.pe-progress-fill-warning {\n  background:\n    linear-gradient(\n      90deg,\n      #f59e0b,\n      #d97706);\n  box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);\n}\n.pe-progress-fill-critical {\n  background:\n    linear-gradient(\n      90deg,\n      #ef4444,\n      #dc2626);\n  box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);\n}\n.pe-preview-card {\n  background: rgba(15, 23, 42, 0.7);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  border-radius: 10px;\n  padding: 14px 16px;\n  margin: 14px 0;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n.pe-preview-title {\n  font-size: 0.72rem;\n  font-weight: 600;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-preview-row {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n.pe-badge {\n  display: inline-flex;\n  align-items: center;\n  gap: 5px;\n  padding: 3px 8px;\n  border-radius: 9999px;\n  font-size: 0.72rem;\n  font-weight: 500;\n  line-height: 1;\n}\n.pe-badge-dot {\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n}\n.pe-badge-active {\n  background: rgba(34, 197, 94, 0.12);\n  color: #4ade80;\n  border: 1px solid rgba(34, 197, 94, 0.25);\n}\n.pe-badge-active .pe-badge-dot {\n  background: #22c55e;\n}\n.pe-badge-suspended {\n  background: rgba(239, 68, 68, 0.12);\n  color: #f87171;\n  border: 1px solid rgba(239, 68, 68, 0.25);\n}\n.pe-badge-suspended .pe-badge-dot {\n  background: #ef4444;\n}\n.pe-badge-scheduled {\n  background: rgba(234, 179, 8, 0.12);\n  color: #facc15;\n  border: 1px solid rgba(234, 179, 8, 0.25);\n}\n.pe-badge-scheduled .pe-badge-dot {\n  background: #eab308;\n}\n.pe-badge-terminated {\n  background: rgba(148, 163, 184, 0.12);\n  color: #94a3b8;\n  border: 1px solid rgba(148, 163, 184, 0.25);\n}\n.pe-badge-terminated .pe-badge-dot {\n  background: #64748b;\n}\n.pe-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 6px;\n  padding: 7px 14px;\n  border-radius: 6px;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  cursor: pointer;\n  transition: all 0.15s ease;\n  border: none;\n  outline: none;\n  white-space: nowrap;\n}\n.pe-btn-primary {\n  background: var(--primary, #6366f1);\n  color: #ffffff;\n}\n.pe-btn-primary:hover:not(:disabled) {\n  opacity: 0.92;\n  transform: translateY(-0.5px);\n}\n.pe-btn-secondary {\n  background: var(--muted, rgba(255, 255, 255, 0.08));\n  color: var(--foreground, #ffffff);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n}\n.pe-btn-secondary:hover:not(:disabled) {\n  background: rgba(255, 255, 255, 0.12);\n}\n.pe-btn-danger {\n  background: rgba(239, 68, 68, 0.15);\n  color: #f87171;\n  border: 1px solid rgba(239, 68, 68, 0.25);\n}\n.pe-btn-danger:hover:not(:disabled) {\n  background: rgba(239, 68, 68, 0.25);\n}\n.pe-btn-preset {\n  padding: 3px 8px;\n  font-size: 0.72rem;\n  font-weight: 500;\n  border-radius: 5px;\n  background: rgba(255, 255, 255, 0.06);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  color: #cbd5e1;\n  cursor: pointer;\n  transition: all 0.12s ease;\n}\n.pe-btn-preset:hover {\n  background: rgba(255, 255, 255, 0.12);\n  color: #ffffff;\n  border-color: rgba(255, 255, 255, 0.25);\n}\n.pe-modal-overlay {\n  position: fixed;\n  inset: 0;\n  z-index: 99999;\n  background: rgba(0, 0, 0, 0.65);\n  backdrop-filter: blur(6px);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 20px;\n}\n.pe-modal {\n  position: relative;\n  width: 100%;\n  max-width: 560px;\n  background: var(--card, #1e293b);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n  border-radius: 12px;\n  padding: 24px;\n  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);\n  max-height: 92vh;\n  overflow-y: auto;\n}\n.pe-modal-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 18px;\n}\n.pe-form-group {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  margin-bottom: 16px;\n}\n.pe-form-label {\n  font-size: 0.8125rem;\n  font-weight: 500;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-checkbox-label {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 0.8125rem;\n  color: var(--foreground, #e2e8f0);\n  cursor: pointer;\n  user-select: none;\n}\n.pe-spinner {\n  width: 16px;\n  height: 16px;\n  border: 2px solid rgba(255, 255, 255, 0.2);\n  border-top-color: #ffffff;\n  border-radius: 50%;\n  animation: pe-spin 0.6s linear infinite;\n  display: inline-block;\n}\n@keyframes pe-spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.pe-slim-banner {\n  width: 100%;\n  margin-bottom: 16px;\n  background: var(--card, rgba(30, 41, 59, 0.45));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  border-radius: 8px;\n  overflow: hidden;\n  box-sizing: border-box;\n  transition: border-color 0.2s ease, background 0.2s ease;\n}\n.pe-slim-banner:hover {\n  border-color: rgba(255, 255, 255, 0.12);\n}\n.pe-slim-banner-good {\n  border-left: 3px solid #3b82f6;\n}\n.pe-slim-banner-warning {\n  border-left: 3px solid #f59e0b;\n}\n.pe-slim-banner-critical {\n  border-left: 3px solid #ef4444;\n}\n.pe-slim-banner-body {\n  padding: 9px 14px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  flex-wrap: wrap;\n}\n.pe-slim-banner-left {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.pe-slim-icon {\n  color: var(--muted-foreground, #94a3b8);\n  flex-shrink: 0;\n}\n.pe-slim-banner-good .pe-slim-icon {\n  color: #38bdf8;\n}\n.pe-slim-banner-warning .pe-slim-icon {\n  color: #fbbf24;\n}\n.pe-slim-banner-critical .pe-slim-icon {\n  color: #f87171;\n}\n.pe-slim-title {\n  font-size: 0.8125rem;\n  font-weight: 500;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-slim-date {\n  font-size: 0.8125rem;\n  font-weight: 600;\n  color: var(--foreground, #f8fafc);\n}\n.pe-slim-chip {\n  display: inline-flex;\n  align-items: center;\n  font-size: 0.7rem;\n  font-weight: 500;\n  line-height: 1;\n  padding: 2.5px 7px;\n  border-radius: 9999px;\n  background: rgba(255, 255, 255, 0.06);\n  border: 1px solid rgba(255, 255, 255, 0.08);\n  color: var(--muted-foreground, #94a3b8);\n  white-space: nowrap;\n}\n.pe-slim-chip-good {\n  background: rgba(59, 130, 246, 0.1);\n  border-color: rgba(59, 130, 246, 0.2);\n  color: #60a5fa;\n}\n.pe-slim-chip-warning {\n  background: rgba(245, 158, 11, 0.1);\n  border-color: rgba(245, 158, 11, 0.2);\n  color: #fbbf24;\n}\n.pe-slim-chip-critical {\n  background: rgba(239, 68, 68, 0.1);\n  border-color: rgba(239, 68, 68, 0.25);\n  color: #f87171;\n}\n.pe-slim-banner-right {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  font-size: 0.75rem;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-slim-term-notice {\n  font-size: 0.75rem;\n  color: #94a3b8;\n}\n.pe-slim-note {\n  font-size: 0.75rem;\n  color: #cbd5e1;\n  max-width: 220px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.pe-slim-track {\n  width: 100%;\n  height: 3px;\n  background: rgba(255, 255, 255, 0.04);\n  overflow: hidden;\n  position: relative;\n}\n.pe-slim-fill {\n  height: 100%;\n  transition: width 0.3s ease;\n}\n.pe-slim-fill-good {\n  background: #3b82f6;\n}\n.pe-slim-fill-warning {\n  background: #f59e0b;\n}\n.pe-slim-fill-critical {\n  background: #ef4444;\n}\n.pe-input-box {\n  position: relative !important;\n  display: flex !important;\n  align-items: center !important;\n}\n.pe-input-box svg.pe-input-icon,\nsvg.pe-input-icon,\n.pe-input-icon {\n  position: absolute !important;\n  left: 14px !important;\n  top: 50% !important;\n  transform: translateY(-50%) !important;\n  width: 16px !important;\n  height: 16px !important;\n  min-width: 16px !important;\n  min-height: 16px !important;\n  max-width: 16px !important;\n  max-height: 16px !important;\n  color: var(--muted-foreground, #94a3b8) !important;\n  pointer-events: none !important;\n  z-index: 10 !important;\n  display: block !important;\n  flex-shrink: 0 !important;\n}\n.pe-input-box input.pe-input,\n.pe-input-box input.pe-search-input,\ninput.pe-input,\ninput.pe-search-input {\n  width: 100% !important;\n  padding-left: 42px !important;\n  padding-right: 14px !important;\n  padding-top: 9px !important;\n  padding-bottom: 9px !important;\n  box-sizing: border-box !important;\n}\n.pe-tab-row {\n  display: flex;\n  gap: 8px;\n  margin-bottom: 18px;\n  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  padding-bottom: 12px;\n}\n.pe-tab-btn {\n  padding: 7px 14px;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  border-radius: 6px;\n  border: 1px solid transparent;\n  background: transparent;\n  color: var(--muted-foreground, #94a3b8);\n  cursor: pointer;\n  transition: all 0.15s ease;\n}\n.pe-tab-btn:hover {\n  color: var(--foreground, #ffffff);\n  background: rgba(255, 255, 255, 0.04);\n}\n.pe-tab-btn.pe-tab-active {\n  background: rgba(59, 130, 246, 0.12);\n  color: #60a5fa;\n  border-color: rgba(59, 130, 246, 0.3);\n  font-weight: 600;\n}\n.pe-tag-chip {\n  display: inline-flex;\n  align-items: center;\n  padding: 3px 8px;\n  font-size: 0.72rem;\n  font-family:\n    ui-monospace,\n    SFMono-Regular,\n    Menlo,\n    Monaco,\n    Consolas,\n    monospace;\n  background: rgba(15, 23, 42, 0.8);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  color: #38bdf8;\n  border-radius: 5px;\n  cursor: pointer;\n  transition: all 0.15s ease;\n}\n.pe-tag-chip:hover {\n  background: rgba(56, 189, 248, 0.15);\n  border-color: #38bdf8;\n  color: #ffffff;\n  transform: translateY(-1px);\n}\n.pe-email-preview {\n  background: #0f172a;\n  border: 1px solid #334155;\n  border-radius: 10px;\n  padding: 18px 20px;\n  margin-top: 14px;\n  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);\n}\n.pe-email-preview-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  border-bottom: 1px solid #334155;\n  padding-bottom: 12px;\n  margin-bottom: 14px;\n}\n.pe-email-preview-title {\n  font-size: 0.95rem;\n  font-weight: 700;\n  color: #f8fafc;\n  margin: 0 0 10px 0;\n}\n.pe-email-preview-body {\n  font-size: 0.82rem;\n  color: #cbd5e1;\n  line-height: 1.6;\n  white-space: pre-wrap;\n  background: #1e293b;\n  padding: 12px 14px;\n  border-radius: 8px;\n  border: 1px solid rgba(255, 255, 255, 0.05);\n}\n.pe-email-preview-meta {\n  width: 100%;\n  margin-top: 12px;\n  border-collapse: collapse;\n  font-size: 0.75rem;\n}\n.pe-email-preview-meta td {\n  padding: 5px 8px;\n  border-bottom: 1px solid #334155;\n}\n.pe-email-preview-btn {\n  display: inline-block;\n  padding: 8px 18px;\n  font-size: 0.8125rem;\n  font-weight: 600;\n  background: #3b82f6;\n  color: #ffffff;\n  border-radius: 6px;\n  text-decoration: none;\n  margin-top: 14px;\n  text-align: center;\n}\n";
+                style.textContent = "/* src/client/styles.css */\n.pe-container {\n  width: 100%;\n  margin: 0 auto;\n  padding-top: 24px;\n  padding-bottom: 32px;\n  font-family: inherit;\n  color: var(--foreground, #f8fafc);\n  box-sizing: border-box;\n}\n.pe-container *,\n.pe-container *::before,\n.pe-container *::after {\n  box-sizing: border-box;\n}\n.pe-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 16px;\n  margin-bottom: 24px;\n  flex-wrap: wrap;\n}\n.pe-title-wrap {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n.pe-title {\n  font-size: 1.25rem;\n  font-weight: 600;\n  color: var(--foreground, #ffffff);\n  margin: 0;\n  letter-spacing: -0.015em;\n}\n.pe-subtitle {\n  font-size: 0.8125rem;\n  color: var(--muted-foreground, #94a3b8);\n  margin: 0;\n}\n.pe-stats-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: 14px;\n  margin-bottom: 24px;\n}\n.pe-stat-card {\n  background: var(--card, rgba(30, 41, 59, 0.45));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  border-radius: 10px;\n  padding: 16px 20px;\n  display: flex;\n  flex-direction: column;\n  gap: 4px;\n}\n.pe-stat-val {\n  font-size: 1.5rem;\n  font-weight: 700;\n  color: var(--foreground, #ffffff);\n  line-height: 1.2;\n}\n.pe-stat-label {\n  font-size: 0.75rem;\n  font-weight: 500;\n  color: var(--muted-foreground, #94a3b8);\n  text-transform: uppercase;\n  letter-spacing: 0.04em;\n}\n.pe-toolbar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  margin-bottom: 18px;\n  flex-wrap: wrap;\n}\n.pe-input-box {\n  position: relative;\n  flex: 1;\n  min-width: 240px;\n}\n.pe-input {\n  width: 100%;\n  padding: 8px 14px 8px 36px;\n  background: var(--input, rgba(15, 23, 42, 0.6));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n  border-radius: 8px;\n  color: var(--foreground, #f8fafc);\n  font-size: 0.84375rem;\n  outline: none;\n  transition: border-color 0.15s ease, box-shadow 0.15s ease;\n}\n.pe-input:focus {\n  border-color: var(--ring, #6366f1);\n  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);\n}\n.pe-input-icon {\n  position: absolute;\n  left: 11px;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 15px;\n  height: 15px;\n  color: var(--muted-foreground, #64748b);\n  pointer-events: none;\n}\n.pe-select {\n  padding: 8px 12px;\n  background: var(--input, rgba(15, 23, 42, 0.6));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n  border-radius: 8px;\n  color: var(--foreground, #f8fafc);\n  font-size: 0.84375rem;\n  outline: none;\n  cursor: pointer;\n}\n.pe-select:focus {\n  border-color: var(--ring, #6366f1);\n}\n.pe-table-card {\n  background: var(--card, rgba(30, 41, 59, 0.45));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  border-radius: 10px;\n  overflow-x: auto;\n  overflow-y: hidden;\n  position: relative;\n  max-width: 100%;\n  cursor: default;\n  scrollbar-width: thin;\n  scrollbar-color: #6366f1 rgba(15, 23, 42, 0.8);\n  -webkit-overflow-scrolling: touch;\n}\n.pe-table-card.pe-table-dragging {\n  cursor: grabbing !important;\n  user-select: none;\n}\n.pe-table-card::-webkit-scrollbar {\n  height: 10px;\n  display: block;\n}\n.pe-table-card::-webkit-scrollbar-track {\n  background: rgba(15, 23, 42, 0.85);\n  border-radius: 6px;\n  margin: 0 4px;\n}\n.pe-table-card::-webkit-scrollbar-thumb {\n  background: #6366f1;\n  border-radius: 6px;\n  border: 2px solid rgba(15, 23, 42, 0.85);\n}\n.pe-table-card::-webkit-scrollbar-thumb:hover {\n  background: #818cf8;\n}\n.pe-table {\n  width: 100%;\n  min-width: 1100px;\n  border-collapse: separate;\n  border-spacing: 0;\n  font-size: 0.84375rem;\n  text-align: left;\n}\n.pe-table th {\n  padding: 12px 16px;\n  background: #111726;\n  color: var(--muted-foreground, #94a3b8);\n  font-weight: 600;\n  font-size: 0.75rem;\n  text-transform: uppercase;\n  letter-spacing: 0.04em;\n  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  white-space: nowrap;\n}\n.pe-table td {\n  padding: 12px 16px;\n  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.04));\n  background: rgba(21, 29, 45, 0.6);\n  color: var(--foreground, #e2e8f0);\n  vertical-align: middle;\n}\n.pe-table tr:hover td {\n  background: rgba(30, 41, 59, 0.75);\n}\n.pe-table th.pe-col-sticky-right {\n  position: sticky;\n  right: 0;\n  z-index: 25;\n  background: #0f172a;\n  box-shadow: -8px 0 16px -4px rgba(0, 0, 0, 0.6);\n}\n.pe-table td.pe-col-sticky-right {\n  position: sticky;\n  right: 0;\n  z-index: 15;\n  background: #131b2e;\n  box-shadow: -8px 0 16px -4px rgba(0, 0, 0, 0.6);\n}\n.pe-table tr:hover td.pe-col-sticky-right {\n  background: #1c273e;\n}\n.pe-actions-wrap {\n  display: flex;\n  gap: 6px;\n  justify-content: flex-end;\n  align-items: center;\n  white-space: nowrap;\n}\n.pe-btn-sm {\n  padding: 6px 12px;\n  font-size: 0.8125rem;\n  font-weight: 600;\n}\n.pe-table-meta-bar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  padding: 9px 14px;\n  margin-bottom: 8px;\n  background: rgba(15, 23, 42, 0.5);\n  border: 1px solid rgba(255, 255, 255, 0.07);\n  border-radius: 8px;\n  font-size: 0.8125rem;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-table-meta-count strong {\n  color: #f8fafc;\n}\n.pe-table-scroll-controls {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n}\n.pe-scroll-hint {\n  display: inline-flex;\n  align-items: center;\n  gap: 5px;\n  font-size: 0.75rem;\n  color: #94a3b8;\n}\n.pe-scroll-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 4px;\n  padding: 4px 10px;\n  background: rgba(30, 41, 59, 0.85);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  border-radius: 6px;\n  color: #e2e8f0;\n  font-size: 0.75rem;\n  font-weight: 600;\n  cursor: pointer;\n  transition: all 0.15s ease;\n}\n.pe-scroll-btn:hover {\n  background: rgba(99, 102, 241, 0.25);\n  border-color: #6366f1;\n  color: #ffffff;\n}\n.pe-quick-edit-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 4px;\n  padding: 3px 8px;\n  background: rgba(99, 102, 241, 0.15);\n  border: 1px solid rgba(99, 102, 241, 0.35);\n  border-radius: 5px;\n  color: #a5b4fc;\n  font-size: 0.72rem;\n  font-weight: 600;\n  cursor: pointer;\n  white-space: nowrap;\n  transition: all 0.15s ease;\n}\n.pe-quick-edit-btn:hover {\n  background: #4f46e5;\n  border-color: #6366f1;\n  color: #ffffff;\n  box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);\n}\n.pe-time-clickable {\n  cursor: pointer;\n  transition: transform 0.15s ease, opacity 0.15s ease;\n}\n.pe-time-clickable:hover {\n  opacity: 0.9;\n  transform: translateY(-1px);\n}\n.pe-time-chip-hoverable {\n  border: 1px dashed rgba(99, 102, 241, 0.4);\n  background: rgba(99, 102, 241, 0.1);\n  color: #a5b4fc;\n  cursor: pointer;\n}\n.pe-time-chip-hoverable:hover {\n  background: rgba(99, 102, 241, 0.25);\n  border-color: #6366f1;\n  color: #ffffff;\n}\n.pe-time-cell {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  min-width: 190px;\n}\n.pe-time-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n}\n.pe-time-date {\n  font-size: 0.8125rem;\n  font-weight: 600;\n  color: #f8fafc;\n  white-space: nowrap;\n}\n.pe-time-chip {\n  display: inline-flex;\n  align-items: center;\n  gap: 4px;\n  padding: 2px 7px;\n  border-radius: 9999px;\n  font-size: 0.7rem;\n  font-weight: 600;\n  line-height: 1.2;\n  white-space: nowrap;\n}\n.pe-time-chip-good {\n  background: rgba(16, 185, 129, 0.12);\n  color: #34d399;\n  border: 1px solid rgba(16, 185, 129, 0.25);\n}\n.pe-time-chip-warning {\n  background: rgba(245, 158, 11, 0.12);\n  color: #fbbf24;\n  border: 1px solid rgba(245, 158, 11, 0.25);\n}\n.pe-time-chip-critical {\n  background: rgba(239, 68, 68, 0.14);\n  color: #f87171;\n  border: 1px solid rgba(239, 68, 68, 0.28);\n}\n.pe-time-chip-muted {\n  background: rgba(148, 163, 184, 0.1);\n  color: #94a3b8;\n  border: 1px solid rgba(148, 163, 184, 0.2);\n}\n.pe-progress-track {\n  width: 100%;\n  height: 6px;\n  background: rgba(255, 255, 255, 0.08);\n  border-radius: 9999px;\n  overflow: hidden;\n  position: relative;\n}\n.pe-progress-fill {\n  height: 100%;\n  border-radius: 9999px;\n  transition: width 0.35s ease, background 0.35s ease;\n}\n.pe-progress-fill-good {\n  background:\n    linear-gradient(\n      90deg,\n      #10b981,\n      #059669);\n  box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);\n}\n.pe-progress-fill-warning {\n  background:\n    linear-gradient(\n      90deg,\n      #f59e0b,\n      #d97706);\n  box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);\n}\n.pe-progress-fill-critical {\n  background:\n    linear-gradient(\n      90deg,\n      #ef4444,\n      #dc2626);\n  box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);\n}\n.pe-preview-card {\n  background: rgba(15, 23, 42, 0.7);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  border-radius: 10px;\n  padding: 14px 16px;\n  margin: 14px 0;\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n.pe-preview-title {\n  font-size: 0.72rem;\n  font-weight: 600;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-preview-row {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n.pe-badge {\n  display: inline-flex;\n  align-items: center;\n  gap: 5px;\n  padding: 3px 8px;\n  border-radius: 9999px;\n  font-size: 0.72rem;\n  font-weight: 500;\n  line-height: 1;\n}\n.pe-badge-dot {\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n}\n.pe-badge-active {\n  background: rgba(34, 197, 94, 0.12);\n  color: #4ade80;\n  border: 1px solid rgba(34, 197, 94, 0.25);\n}\n.pe-badge-active .pe-badge-dot {\n  background: #22c55e;\n}\n.pe-badge-suspended {\n  background: rgba(239, 68, 68, 0.12);\n  color: #f87171;\n  border: 1px solid rgba(239, 68, 68, 0.25);\n}\n.pe-badge-suspended .pe-badge-dot {\n  background: #ef4444;\n}\n.pe-badge-scheduled {\n  background: rgba(234, 179, 8, 0.12);\n  color: #facc15;\n  border: 1px solid rgba(234, 179, 8, 0.25);\n}\n.pe-badge-scheduled .pe-badge-dot {\n  background: #eab308;\n}\n.pe-badge-terminated {\n  background: rgba(148, 163, 184, 0.12);\n  color: #94a3b8;\n  border: 1px solid rgba(148, 163, 184, 0.25);\n}\n.pe-badge-terminated .pe-badge-dot {\n  background: #64748b;\n}\n.pe-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 6px;\n  padding: 7px 14px;\n  border-radius: 6px;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  cursor: pointer;\n  transition: all 0.15s ease;\n  border: none;\n  outline: none;\n  white-space: nowrap;\n}\n.pe-btn-primary {\n  background: var(--primary, #6366f1);\n  color: #ffffff;\n}\n.pe-btn-primary:hover:not(:disabled) {\n  opacity: 0.92;\n  transform: translateY(-0.5px);\n}\n.pe-btn-secondary {\n  background: var(--muted, rgba(255, 255, 255, 0.08));\n  color: var(--foreground, #ffffff);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n}\n.pe-btn-secondary:hover:not(:disabled) {\n  background: rgba(255, 255, 255, 0.12);\n}\n.pe-btn-danger {\n  background: rgba(239, 68, 68, 0.15);\n  color: #f87171;\n  border: 1px solid rgba(239, 68, 68, 0.25);\n}\n.pe-btn-danger:hover:not(:disabled) {\n  background: rgba(239, 68, 68, 0.25);\n}\n.pe-btn-preset {\n  padding: 3px 8px;\n  font-size: 0.72rem;\n  font-weight: 500;\n  border-radius: 5px;\n  background: rgba(255, 255, 255, 0.06);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  color: #cbd5e1;\n  cursor: pointer;\n  transition: all 0.12s ease;\n}\n.pe-btn-preset:hover {\n  background: rgba(255, 255, 255, 0.12);\n  color: #ffffff;\n  border-color: rgba(255, 255, 255, 0.25);\n}\n.pe-modal-overlay {\n  position: fixed;\n  inset: 0;\n  z-index: 99999;\n  background: rgba(0, 0, 0, 0.65);\n  backdrop-filter: blur(6px);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 20px;\n}\n.pe-modal {\n  position: relative;\n  width: 100%;\n  max-width: 560px;\n  background: var(--card, #1e293b);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));\n  border-radius: 12px;\n  padding: 24px;\n  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);\n  max-height: 92vh;\n  overflow-y: auto;\n}\n.pe-modal-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 18px;\n}\n.pe-form-group {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  margin-bottom: 16px;\n}\n.pe-form-label {\n  font-size: 0.8125rem;\n  font-weight: 500;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-checkbox-label {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 0.8125rem;\n  color: var(--foreground, #e2e8f0);\n  cursor: pointer;\n  user-select: none;\n}\n.pe-spinner {\n  width: 16px;\n  height: 16px;\n  border: 2px solid rgba(255, 255, 255, 0.2);\n  border-top-color: #ffffff;\n  border-radius: 50%;\n  animation: pe-spin 0.6s linear infinite;\n  display: inline-block;\n}\n@keyframes pe-spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.pe-slim-banner {\n  width: 100%;\n  margin-bottom: 16px;\n  background: var(--card, rgba(30, 41, 59, 0.45));\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  border-radius: 8px;\n  overflow: hidden;\n  box-sizing: border-box;\n  transition: border-color 0.2s ease, background 0.2s ease;\n}\n.pe-slim-banner:hover {\n  border-color: rgba(255, 255, 255, 0.12);\n}\n.pe-slim-banner-good {\n  border-left: 3px solid #3b82f6;\n}\n.pe-slim-banner-warning {\n  border-left: 3px solid #f59e0b;\n}\n.pe-slim-banner-critical {\n  border-left: 3px solid #ef4444;\n}\n.pe-slim-banner-body {\n  padding: 9px 14px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  flex-wrap: wrap;\n}\n.pe-slim-banner-left {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.pe-slim-icon {\n  color: var(--muted-foreground, #94a3b8);\n  flex-shrink: 0;\n}\n.pe-slim-banner-good .pe-slim-icon {\n  color: #38bdf8;\n}\n.pe-slim-banner-warning .pe-slim-icon {\n  color: #fbbf24;\n}\n.pe-slim-banner-critical .pe-slim-icon {\n  color: #f87171;\n}\n.pe-slim-title {\n  font-size: 0.8125rem;\n  font-weight: 500;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-slim-date {\n  font-size: 0.8125rem;\n  font-weight: 600;\n  color: var(--foreground, #f8fafc);\n}\n.pe-slim-chip {\n  display: inline-flex;\n  align-items: center;\n  font-size: 0.7rem;\n  font-weight: 500;\n  line-height: 1;\n  padding: 2.5px 7px;\n  border-radius: 9999px;\n  background: rgba(255, 255, 255, 0.06);\n  border: 1px solid rgba(255, 255, 255, 0.08);\n  color: var(--muted-foreground, #94a3b8);\n  white-space: nowrap;\n}\n.pe-slim-chip-good {\n  background: rgba(59, 130, 246, 0.1);\n  border-color: rgba(59, 130, 246, 0.2);\n  color: #60a5fa;\n}\n.pe-slim-chip-warning {\n  background: rgba(245, 158, 11, 0.1);\n  border-color: rgba(245, 158, 11, 0.2);\n  color: #fbbf24;\n}\n.pe-slim-chip-critical {\n  background: rgba(239, 68, 68, 0.1);\n  border-color: rgba(239, 68, 68, 0.25);\n  color: #f87171;\n}\n.pe-slim-banner-right {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  font-size: 0.75rem;\n  color: var(--muted-foreground, #94a3b8);\n}\n.pe-slim-term-notice {\n  font-size: 0.75rem;\n  color: #94a3b8;\n}\n.pe-slim-note {\n  font-size: 0.75rem;\n  color: #cbd5e1;\n  max-width: 220px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.pe-slim-track {\n  width: 100%;\n  height: 3px;\n  background: rgba(255, 255, 255, 0.04);\n  overflow: hidden;\n  position: relative;\n}\n.pe-slim-fill {\n  height: 100%;\n  transition: width 0.3s ease;\n}\n.pe-slim-fill-good {\n  background: #3b82f6;\n}\n.pe-slim-fill-warning {\n  background: #f59e0b;\n}\n.pe-slim-fill-critical {\n  background: #ef4444;\n}\n.pe-input-box {\n  position: relative !important;\n  display: flex !important;\n  align-items: center !important;\n}\n.pe-input-box svg.pe-input-icon,\nsvg.pe-input-icon,\n.pe-input-icon {\n  position: absolute !important;\n  left: 14px !important;\n  top: 50% !important;\n  transform: translateY(-50%) !important;\n  width: 16px !important;\n  height: 16px !important;\n  min-width: 16px !important;\n  min-height: 16px !important;\n  max-width: 16px !important;\n  max-height: 16px !important;\n  color: var(--muted-foreground, #94a3b8) !important;\n  pointer-events: none !important;\n  z-index: 10 !important;\n  display: block !important;\n  flex-shrink: 0 !important;\n}\n.pe-input-box input.pe-input,\n.pe-input-box input.pe-search-input,\ninput.pe-input,\ninput.pe-search-input {\n  width: 100% !important;\n  padding-left: 42px !important;\n  padding-right: 14px !important;\n  padding-top: 9px !important;\n  padding-bottom: 9px !important;\n  box-sizing: border-box !important;\n}\n.pe-tab-row {\n  display: flex;\n  gap: 8px;\n  margin-bottom: 18px;\n  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.08));\n  padding-bottom: 12px;\n}\n.pe-tab-btn {\n  padding: 7px 14px;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  border-radius: 6px;\n  border: 1px solid transparent;\n  background: transparent;\n  color: var(--muted-foreground, #94a3b8);\n  cursor: pointer;\n  transition: all 0.15s ease;\n}\n.pe-tab-btn:hover {\n  color: var(--foreground, #ffffff);\n  background: rgba(255, 255, 255, 0.04);\n}\n.pe-tab-btn.pe-tab-active {\n  background: rgba(59, 130, 246, 0.12);\n  color: #60a5fa;\n  border-color: rgba(59, 130, 246, 0.3);\n  font-weight: 600;\n}\n.pe-tag-chip {\n  display: inline-flex;\n  align-items: center;\n  padding: 3px 8px;\n  font-size: 0.72rem;\n  font-family:\n    ui-monospace,\n    SFMono-Regular,\n    Menlo,\n    Monaco,\n    Consolas,\n    monospace;\n  background: rgba(15, 23, 42, 0.8);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  color: #38bdf8;\n  border-radius: 5px;\n  cursor: pointer;\n  transition: all 0.15s ease;\n}\n.pe-tag-chip:hover {\n  background: rgba(56, 189, 248, 0.15);\n  border-color: #38bdf8;\n  color: #ffffff;\n  transform: translateY(-1px);\n}\n.pe-email-preview {\n  background: #0f172a;\n  border: 1px solid #334155;\n  border-radius: 10px;\n  padding: 18px 20px;\n  margin-top: 14px;\n  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);\n}\n.pe-email-preview-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  border-bottom: 1px solid #334155;\n  padding-bottom: 12px;\n  margin-bottom: 14px;\n}\n.pe-email-preview-title {\n  font-size: 0.95rem;\n  font-weight: 700;\n  color: #f8fafc;\n  margin: 0 0 10px 0;\n}\n.pe-email-preview-body {\n  font-size: 0.82rem;\n  color: #cbd5e1;\n  line-height: 1.6;\n  white-space: pre-wrap;\n  background: #1e293b;\n  padding: 12px 14px;\n  border-radius: 8px;\n  border: 1px solid rgba(255, 255, 255, 0.05);\n}\n.pe-email-preview-meta {\n  width: 100%;\n  margin-top: 12px;\n  border-collapse: collapse;\n  font-size: 0.75rem;\n}\n.pe-email-preview-meta td {\n  padding: 5px 8px;\n  border-bottom: 1px solid #334155;\n}\n.pe-email-preview-btn {\n  display: inline-block;\n  padding: 8px 18px;\n  font-size: 0.8125rem;\n  font-weight: 600;\n  background: #3b82f6;\n  color: #ffffff;\n  border-radius: 6px;\n  text-decoration: none;\n  margin-top: 14px;\n  text-align: center;\n}\n";
                 document.head.appendChild(style);
             } catch (e) {}
         }
@@ -39,7 +39,7 @@ var SuspensionScreen_exports = {};
 __export(SuspensionScreen_exports, {
   default: () => SuspensionScreen
 });
-import { useState as useState2, useEffect as useEffect2 } from "react";
+import { useState as useState2, useEffect as useEffect2, useRef } from "react";
 import { useQuery as useQuery2, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@pterodactyl/sdk";
 import { jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
@@ -131,6 +131,54 @@ function SuspensionScreen() {
   const [bulkGraceDays, setBulkGraceDays] = useState2(7);
   const [bulkNotify, setBulkNotify] = useState2(true);
   const [selectedServerIds, setSelectedServerIds] = useState2([]);
+  const tableCardRef = useRef(null);
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+  const [isDragging, setIsDragging] = useState2(false);
+  const scrollTable = (direction) => {
+    if (!tableCardRef.current) return;
+    const amount = direction === "left" ? -350 : 350;
+    tableCardRef.current.scrollBy({ left: amount, behavior: "smooth" });
+  };
+  const handleTableWheel = (e) => {
+    const el = tableCardRef.current;
+    if (!el) return;
+    if (Math.abs(e.deltaX) > 0) return;
+    if (Math.abs(e.deltaY) > 0) {
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (maxScroll <= 0) return;
+      const canScrollLeft = el.scrollLeft > 0;
+      const canScrollRight = el.scrollLeft < maxScroll - 1;
+      if (e.deltaY > 0 && canScrollRight || e.deltaY < 0 && canScrollLeft) {
+        el.scrollLeft += e.deltaY;
+        e.preventDefault();
+      }
+    }
+  };
+  const handleMouseDown = (e) => {
+    if (e.button !== 0) return;
+    const target = e.target;
+    if (target.closest("button, input, select, a, .pe-btn, .pe-quick-edit-btn, .pe-time-clickable")) {
+      return;
+    }
+    if (!tableCardRef.current) return;
+    isDraggingRef.current = true;
+    startXRef.current = e.pageX - tableCardRef.current.offsetLeft;
+    scrollLeftRef.current = tableCardRef.current.scrollLeft;
+    setIsDragging(true);
+  };
+  const handleMouseMove = (e) => {
+    if (!isDraggingRef.current || !tableCardRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - tableCardRef.current.offsetLeft;
+    const walk = (x - startXRef.current) * 1.4;
+    tableCardRef.current.scrollLeft = scrollLeftRef.current - walk;
+  };
+  const handleMouseUp = () => {
+    isDraggingRef.current = false;
+    setIsDragging(false);
+  };
   const [emailModalOpen, setEmailModalOpen] = useState2(false);
   const [activeMailTab, setActiveMailTab] = useState2("suspension");
   const [mailSuspEnabled, setMailSuspEnabled] = useState2(true);
@@ -529,150 +577,246 @@ function SuspensionScreen() {
         }
       )
     ] }),
-    /* @__PURE__ */ jsx2("div", { className: "pe-table-card", children: /* @__PURE__ */ jsxs2("table", { className: "pe-table", children: [
-      /* @__PURE__ */ jsx2("thead", { children: /* @__PURE__ */ jsxs2("tr", { children: [
-        /* @__PURE__ */ jsx2("th", { style: { width: 40, textAlign: "center" }, children: /* @__PURE__ */ jsx2(
-          "input",
+    /* @__PURE__ */ jsxs2("div", { className: "pe-table-meta-bar", children: [
+      /* @__PURE__ */ jsxs2("div", { className: "pe-table-meta-count", children: [
+        "Showing ",
+        /* @__PURE__ */ jsx2("strong", { children: filteredServers.length }),
+        " of ",
+        /* @__PURE__ */ jsx2("strong", { children: servers.length }),
+        " panel servers"
+      ] }),
+      /* @__PURE__ */ jsxs2("div", { className: "pe-table-scroll-controls", children: [
+        /* @__PURE__ */ jsxs2("span", { className: "pe-scroll-hint", children: [
+          /* @__PURE__ */ jsxs2("svg", { width: "13", height: "13", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: [
+            /* @__PURE__ */ jsx2("line", { x1: "5", y1: "12", x2: "19", y2: "12" }),
+            /* @__PURE__ */ jsx2("polyline", { points: "12 5 19 12 12 19" }),
+            /* @__PURE__ */ jsx2("polyline", { points: "12 19 5 12 12 5" })
+          ] }),
+          "Scroll table:"
+        ] }),
+        /* @__PURE__ */ jsxs2(
+          "button",
           {
-            type: "checkbox",
-            checked: filteredServers.length > 0 && selectedServerIds.length === filteredServers.length,
-            onChange: selectAllFiltered
+            type: "button",
+            className: "pe-scroll-btn",
+            title: "Scroll table left",
+            onClick: () => scrollTable("left"),
+            children: [
+              /* @__PURE__ */ jsx2("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", children: /* @__PURE__ */ jsx2("polyline", { points: "15 18 9 12 15 6" }) }),
+              "Left"
+            ]
           }
-        ) }),
-        /* @__PURE__ */ jsx2("th", { children: "Server" }),
-        /* @__PURE__ */ jsx2("th", { children: "Node / Owner" }),
-        /* @__PURE__ */ jsx2("th", { children: "Status" }),
-        /* @__PURE__ */ jsx2("th", { style: { minWidth: 220 }, children: "Suspension Date & Time Left" }),
-        /* @__PURE__ */ jsx2("th", { style: { minWidth: 200 }, children: "Termination Grace" }),
-        /* @__PURE__ */ jsx2("th", { style: { textAlign: "right" }, children: "Actions" })
-      ] }) }),
-      /* @__PURE__ */ jsx2("tbody", { children: overviewQuery.isLoading ? /* @__PURE__ */ jsx2("tr", { children: /* @__PURE__ */ jsxs2("td", { colSpan: 7, style: { textAlign: "center", padding: "36px 0" }, children: [
-        /* @__PURE__ */ jsx2("span", { className: "pe-spinner" }),
-        /* @__PURE__ */ jsx2("p", { className: "pe-subtitle", style: { marginTop: 8 }, children: "Loading panel servers..." })
-      ] }) }) : filteredServers.length === 0 ? /* @__PURE__ */ jsx2("tr", { children: /* @__PURE__ */ jsx2("td", { colSpan: 7, style: { textAlign: "center", padding: "36px 0" }, children: /* @__PURE__ */ jsx2("p", { className: "pe-subtitle", children: "No matching servers found on panel." }) }) }) : filteredServers.map((server) => {
-        const isSuspended = server.server_status === "suspended";
-        const hasSchedule = Boolean(server.suspension_date);
-        const suspTimeInfo = computeTimeLeft(server.suspension_date);
-        const termTimeInfo = computeTimeLeft(server.termination_date);
-        return /* @__PURE__ */ jsxs2("tr", { children: [
-          /* @__PURE__ */ jsx2("td", { style: { textAlign: "center" }, children: /* @__PURE__ */ jsx2(
-            "input",
-            {
-              type: "checkbox",
-              checked: selectedServerIds.includes(server.id),
-              onChange: () => toggleSelectServer(server.id)
-            }
-          ) }),
-          /* @__PURE__ */ jsxs2("td", { children: [
-            /* @__PURE__ */ jsx2("div", { style: { fontWeight: 600 }, children: server.name }),
-            /* @__PURE__ */ jsx2("div", { style: { fontSize: "0.72rem", color: "var(--muted-foreground, #94a3b8)", fontFamily: "monospace" }, children: server.identifier })
-          ] }),
-          /* @__PURE__ */ jsxs2("td", { children: [
-            /* @__PURE__ */ jsx2("div", { style: { fontSize: "0.8125rem" }, children: server.node }),
-            /* @__PURE__ */ jsxs2("div", { style: { fontSize: "0.72rem", color: "var(--muted-foreground, #94a3b8)" }, children: [
-              server.owner,
-              " (",
-              server.owner_email,
-              ")"
-            ] })
-          ] }),
-          /* @__PURE__ */ jsx2("td", { children: isSuspended ? /* @__PURE__ */ jsxs2("span", { className: "pe-badge pe-badge-suspended", children: [
-            /* @__PURE__ */ jsx2("span", { className: "pe-badge-dot" }),
-            "Suspended"
-          ] }) : hasSchedule ? /* @__PURE__ */ jsxs2("span", { className: "pe-badge pe-badge-scheduled", children: [
-            /* @__PURE__ */ jsx2("span", { className: "pe-badge-dot" }),
-            "Scheduled"
-          ] }) : /* @__PURE__ */ jsxs2("span", { className: "pe-badge pe-badge-active", children: [
-            /* @__PURE__ */ jsx2("span", { className: "pe-badge-dot" }),
-            "Active"
+        ),
+        /* @__PURE__ */ jsxs2(
+          "button",
+          {
+            type: "button",
+            className: "pe-scroll-btn",
+            title: "Scroll table right",
+            onClick: () => scrollTable("right"),
+            children: [
+              "Right",
+              /* @__PURE__ */ jsx2("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", children: /* @__PURE__ */ jsx2("polyline", { points: "9 18 15 12 9 6" }) })
+            ]
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx2(
+      "div",
+      {
+        ref: tableCardRef,
+        className: `pe-table-card ${isDragging ? "pe-table-dragging" : ""}`,
+        onWheel: handleTableWheel,
+        onMouseDown: handleMouseDown,
+        onMouseMove: handleMouseMove,
+        onMouseUp: handleMouseUp,
+        onMouseLeave: handleMouseUp,
+        children: /* @__PURE__ */ jsxs2("table", { className: "pe-table", children: [
+          /* @__PURE__ */ jsx2("thead", { children: /* @__PURE__ */ jsxs2("tr", { children: [
+            /* @__PURE__ */ jsx2("th", { style: { width: 44, textAlign: "center" }, children: /* @__PURE__ */ jsx2(
+              "input",
+              {
+                type: "checkbox",
+                checked: filteredServers.length > 0 && selectedServerIds.length === filteredServers.length,
+                onChange: selectAllFiltered
+              }
+            ) }),
+            /* @__PURE__ */ jsx2("th", { style: { minWidth: 170 }, children: "Server" }),
+            /* @__PURE__ */ jsx2("th", { style: { minWidth: 170 }, children: "Node / Owner" }),
+            /* @__PURE__ */ jsx2("th", { style: { minWidth: 110 }, children: "Status" }),
+            /* @__PURE__ */ jsx2("th", { style: { minWidth: 220 }, children: "Suspension Date & Time Left" }),
+            /* @__PURE__ */ jsx2("th", { style: { minWidth: 200 }, children: "Termination Grace" }),
+            /* @__PURE__ */ jsx2("th", { className: "pe-col-sticky-right", style: { minWidth: 250, textAlign: "right" }, children: "Actions" })
           ] }) }),
-          /* @__PURE__ */ jsx2("td", { children: suspTimeInfo.hasDate ? /* @__PURE__ */ jsxs2("div", { className: "pe-time-cell", children: [
-            /* @__PURE__ */ jsxs2("div", { className: "pe-time-header", children: [
-              /* @__PURE__ */ jsx2("span", { className: "pe-time-date", children: suspTimeInfo.formattedDate }),
-              /* @__PURE__ */ jsx2("span", { className: `pe-time-chip pe-time-chip-${suspTimeInfo.urgency}`, children: suspTimeInfo.formattedTimeLeft })
-            ] }),
-            /* @__PURE__ */ jsx2(
-              "div",
-              {
-                className: "pe-progress-track",
-                title: `Suspension due: ${suspTimeInfo.formattedDate} (${suspTimeInfo.formattedTimeLeft})`,
-                children: /* @__PURE__ */ jsx2(
-                  "div",
+          /* @__PURE__ */ jsx2("tbody", { children: overviewQuery.isLoading ? /* @__PURE__ */ jsx2("tr", { children: /* @__PURE__ */ jsxs2("td", { colSpan: 7, style: { textAlign: "center", padding: "36px 0" }, children: [
+            /* @__PURE__ */ jsx2("span", { className: "pe-spinner" }),
+            /* @__PURE__ */ jsx2("p", { className: "pe-subtitle", style: { marginTop: 8 }, children: "Loading panel servers..." })
+          ] }) }) : filteredServers.length === 0 ? /* @__PURE__ */ jsx2("tr", { children: /* @__PURE__ */ jsx2("td", { colSpan: 7, style: { textAlign: "center", padding: "36px 0" }, children: /* @__PURE__ */ jsx2("p", { className: "pe-subtitle", children: "No matching servers found on panel." }) }) }) : filteredServers.map((server) => {
+            const isSuspended = server.server_status === "suspended";
+            const hasSchedule = Boolean(server.suspension_date);
+            const suspTimeInfo = computeTimeLeft(server.suspension_date);
+            const termTimeInfo = computeTimeLeft(server.termination_date);
+            return /* @__PURE__ */ jsxs2("tr", { children: [
+              /* @__PURE__ */ jsx2("td", { style: { textAlign: "center" }, children: /* @__PURE__ */ jsx2(
+                "input",
+                {
+                  type: "checkbox",
+                  checked: selectedServerIds.includes(server.id),
+                  onChange: () => toggleSelectServer(server.id)
+                }
+              ) }),
+              /* @__PURE__ */ jsx2("td", { children: /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }, children: [
+                /* @__PURE__ */ jsxs2("div", { children: [
+                  /* @__PURE__ */ jsx2("div", { style: { fontWeight: 600 }, children: server.name }),
+                  /* @__PURE__ */ jsx2("div", { style: { fontSize: "0.72rem", color: "var(--muted-foreground, #94a3b8)", fontFamily: "monospace" }, children: server.identifier })
+                ] }),
+                /* @__PURE__ */ jsxs2(
+                  "button",
                   {
-                    className: `pe-progress-fill pe-progress-fill-${suspTimeInfo.urgency}`,
-                    style: { width: `${suspTimeInfo.percent}%` }
+                    type: "button",
+                    className: "pe-quick-edit-btn",
+                    title: hasSchedule ? "Edit Expiration Schedule" : "Set Suspension Date",
+                    onClick: () => openEdit(server),
+                    children: [
+                      /* @__PURE__ */ jsxs2("svg", { width: "11", height: "11", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", children: [
+                        /* @__PURE__ */ jsx2("path", { d: "M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" }),
+                        /* @__PURE__ */ jsx2("path", { d: "M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" })
+                      ] }),
+                      /* @__PURE__ */ jsx2("span", { children: hasSchedule ? "Edit" : "Set Date" })
+                    ]
                   }
                 )
-              }
-            )
-          ] }) : /* @__PURE__ */ jsx2("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: /* @__PURE__ */ jsx2("span", { className: "pe-time-chip pe-time-chip-muted", children: "No Expiration Set" }) }) }),
-          /* @__PURE__ */ jsx2("td", { children: termTimeInfo.hasDate ? /* @__PURE__ */ jsxs2("div", { className: "pe-time-cell", children: [
-            /* @__PURE__ */ jsxs2("div", { className: "pe-time-header", children: [
-              /* @__PURE__ */ jsx2("span", { className: "pe-time-date", style: { color: "#f87171" }, children: termTimeInfo.formattedDate }),
-              /* @__PURE__ */ jsx2("span", { className: `pe-time-chip pe-time-chip-${termTimeInfo.urgency}`, children: termTimeInfo.formattedTimeLeft })
-            ] }),
-            /* @__PURE__ */ jsx2(
-              "div",
-              {
-                className: "pe-progress-track",
-                title: `Termination: ${termTimeInfo.formattedDate} (${termTimeInfo.formattedTimeLeft})`,
-                children: /* @__PURE__ */ jsx2(
-                  "div",
+              ] }) }),
+              /* @__PURE__ */ jsxs2("td", { children: [
+                /* @__PURE__ */ jsx2("div", { style: { fontSize: "0.8125rem" }, children: server.node }),
+                /* @__PURE__ */ jsxs2("div", { style: { fontSize: "0.72rem", color: "var(--muted-foreground, #94a3b8)" }, children: [
+                  server.owner,
+                  " (",
+                  server.owner_email,
+                  ")"
+                ] })
+              ] }),
+              /* @__PURE__ */ jsx2("td", { children: isSuspended ? /* @__PURE__ */ jsxs2("span", { className: "pe-badge pe-badge-suspended", children: [
+                /* @__PURE__ */ jsx2("span", { className: "pe-badge-dot" }),
+                "Suspended"
+              ] }) : hasSchedule ? /* @__PURE__ */ jsxs2("span", { className: "pe-badge pe-badge-scheduled", children: [
+                /* @__PURE__ */ jsx2("span", { className: "pe-badge-dot" }),
+                "Scheduled"
+              ] }) : /* @__PURE__ */ jsxs2("span", { className: "pe-badge pe-badge-active", children: [
+                /* @__PURE__ */ jsx2("span", { className: "pe-badge-dot" }),
+                "Active"
+              ] }) }),
+              /* @__PURE__ */ jsx2("td", { children: suspTimeInfo.hasDate ? /* @__PURE__ */ jsxs2(
+                "div",
+                {
+                  className: "pe-time-cell pe-time-clickable",
+                  title: "Click to edit suspension schedule",
+                  onClick: () => openEdit(server),
+                  children: [
+                    /* @__PURE__ */ jsxs2("div", { className: "pe-time-header", children: [
+                      /* @__PURE__ */ jsx2("span", { className: "pe-time-date", children: suspTimeInfo.formattedDate }),
+                      /* @__PURE__ */ jsx2("span", { className: `pe-time-chip pe-time-chip-${suspTimeInfo.urgency}`, children: suspTimeInfo.formattedTimeLeft })
+                    ] }),
+                    /* @__PURE__ */ jsx2(
+                      "div",
+                      {
+                        className: "pe-progress-track",
+                        title: `Suspension due: ${suspTimeInfo.formattedDate} (${suspTimeInfo.formattedTimeLeft})`,
+                        children: /* @__PURE__ */ jsx2(
+                          "div",
+                          {
+                            className: `pe-progress-fill pe-progress-fill-${suspTimeInfo.urgency}`,
+                            style: { width: `${suspTimeInfo.percent}%` }
+                          }
+                        )
+                      }
+                    )
+                  ]
+                }
+              ) : /* @__PURE__ */ jsx2(
+                "div",
+                {
+                  className: "pe-time-cell pe-time-clickable",
+                  title: "Click to set suspension date",
+                  onClick: () => openEdit(server),
+                  style: { display: "inline-flex" },
+                  children: /* @__PURE__ */ jsx2("span", { className: "pe-time-chip pe-time-chip-muted pe-time-chip-hoverable", children: "+ Set Expiration Date" })
+                }
+              ) }),
+              /* @__PURE__ */ jsx2("td", { children: termTimeInfo.hasDate ? /* @__PURE__ */ jsxs2(
+                "div",
+                {
+                  className: "pe-time-cell pe-time-clickable",
+                  title: "Click to edit termination grace period",
+                  onClick: () => openEdit(server),
+                  children: [
+                    /* @__PURE__ */ jsxs2("div", { className: "pe-time-header", children: [
+                      /* @__PURE__ */ jsx2("span", { className: "pe-time-date", style: { color: "#f87171" }, children: termTimeInfo.formattedDate }),
+                      /* @__PURE__ */ jsx2("span", { className: `pe-time-chip pe-time-chip-${termTimeInfo.urgency}`, children: termTimeInfo.formattedTimeLeft })
+                    ] }),
+                    /* @__PURE__ */ jsx2(
+                      "div",
+                      {
+                        className: "pe-progress-track",
+                        title: `Termination: ${termTimeInfo.formattedDate} (${termTimeInfo.formattedTimeLeft})`,
+                        children: /* @__PURE__ */ jsx2(
+                          "div",
+                          {
+                            className: `pe-progress-fill pe-progress-fill-${termTimeInfo.urgency}`,
+                            style: { width: `${termTimeInfo.percent}%` }
+                          }
+                        )
+                      }
+                    )
+                  ]
+                }
+              ) : /* @__PURE__ */ jsx2("span", { style: { fontSize: "0.75rem", color: "var(--muted-foreground, #64748b)" }, children: "None" }) }),
+              /* @__PURE__ */ jsx2("td", { className: "pe-col-sticky-right", children: /* @__PURE__ */ jsxs2("div", { className: "pe-actions-wrap", children: [
+                /* @__PURE__ */ jsx2(
+                  "button",
                   {
-                    className: `pe-progress-fill pe-progress-fill-${termTimeInfo.urgency}`,
-                    style: { width: `${termTimeInfo.percent}%` }
+                    type: "button",
+                    className: "pe-btn pe-btn-primary pe-btn-sm",
+                    onClick: () => openEdit(server),
+                    children: hasSchedule ? "Edit Expiration" : "Set Suspension Date"
+                  }
+                ),
+                hasSchedule && /* @__PURE__ */ jsx2(
+                  "button",
+                  {
+                    type: "button",
+                    className: "pe-btn pe-btn-secondary pe-btn-sm",
+                    title: "Remove scheduled suspension & termination",
+                    onClick: () => actionMutation.mutate({ server_id: server.id, action: "cancel" }),
+                    children: "Remove Schedule"
+                  }
+                ),
+                isSuspended ? /* @__PURE__ */ jsx2(
+                  "button",
+                  {
+                    type: "button",
+                    className: "pe-btn pe-btn-secondary pe-btn-sm",
+                    disabled: actionMutation.isPending,
+                    onClick: () => actionMutation.mutate({ server_id: server.id, action: "unsuspend" }),
+                    children: "Unsuspend"
+                  }
+                ) : /* @__PURE__ */ jsx2(
+                  "button",
+                  {
+                    type: "button",
+                    className: "pe-btn pe-btn-danger pe-btn-sm",
+                    disabled: actionMutation.isPending,
+                    onClick: () => actionMutation.mutate({ server_id: server.id, action: "suspend" }),
+                    children: "Suspend Now"
                   }
                 )
-              }
-            )
-          ] }) : /* @__PURE__ */ jsx2("span", { style: { fontSize: "0.75rem", color: "var(--muted-foreground, #64748b)" }, children: "None" }) }),
-          /* @__PURE__ */ jsx2("td", { children: /* @__PURE__ */ jsxs2("div", { style: { display: "flex", gap: 6, justifyContent: "flex-end", alignItems: "center" }, children: [
-            /* @__PURE__ */ jsx2(
-              "button",
-              {
-                type: "button",
-                className: "pe-btn pe-btn-primary",
-                style: { padding: "6px 12px", fontSize: "0.8125rem", fontWeight: 600 },
-                onClick: () => openEdit(server),
-                children: hasSchedule ? "Edit Expiration" : "Set Suspension Date"
-              }
-            ),
-            hasSchedule && /* @__PURE__ */ jsx2(
-              "button",
-              {
-                type: "button",
-                className: "pe-btn pe-btn-secondary",
-                style: { padding: "6px 10px", fontSize: "0.75rem" },
-                title: "Remove scheduled suspension & termination",
-                onClick: () => actionMutation.mutate({ server_id: server.id, action: "cancel" }),
-                children: "Remove Schedule"
-              }
-            ),
-            isSuspended ? /* @__PURE__ */ jsx2(
-              "button",
-              {
-                type: "button",
-                className: "pe-btn pe-btn-secondary",
-                style: { padding: "6px 10px", fontSize: "0.75rem" },
-                disabled: actionMutation.isPending,
-                onClick: () => actionMutation.mutate({ server_id: server.id, action: "unsuspend" }),
-                children: "Unsuspend"
-              }
-            ) : /* @__PURE__ */ jsx2(
-              "button",
-              {
-                type: "button",
-                className: "pe-btn pe-btn-danger",
-                style: { padding: "6px 10px", fontSize: "0.75rem" },
-                disabled: actionMutation.isPending,
-                onClick: () => actionMutation.mutate({ server_id: server.id, action: "suspend" }),
-                children: "Suspend Now"
-              }
-            )
-          ] }) })
-        ] }, server.id);
-      }) })
-    ] }) }),
+              ] }) })
+            ] }, server.id);
+          }) })
+        ] })
+      }
+    ),
     singleModalOpen && /* @__PURE__ */ jsx2("div", { className: "pe-modal-overlay", onClick: () => setSingleModalOpen(false), children: /* @__PURE__ */ jsxs2("div", { className: "pe-modal", onClick: (e) => e.stopPropagation(), children: [
       /* @__PURE__ */ jsxs2("div", { className: "pe-modal-header", children: [
         /* @__PURE__ */ jsx2("h3", { className: "pe-title", style: { fontSize: "1.1rem" }, children: "Schedule Server Suspension & Expiration" }),
