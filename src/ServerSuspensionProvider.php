@@ -43,6 +43,7 @@ class ServerSuspensionProvider extends ExtensionProvider
                 ExtensionSettingDefinition::make('mail_notifications_enabled', 'toggle', true)
                     ->label('Enable Automated Suspension Emails')
                     ->help('Send automated email alerts to server owners when their server is suspended.')
+                    ->field('toggle')
                     ->tab('Email Notifications')
                     ->frontend(),
                 ExtensionSettingDefinition::make('mail_subject', 'text', '[Notice] Server Suspended: {server_name}')
@@ -52,11 +53,13 @@ class ServerSuspensionProvider extends ExtensionProvider
                 ExtensionSettingDefinition::make('mail_body', 'textarea', $defaultSuspensionBody)
                     ->label('Suspension Email Body')
                     ->help('Body template for suspension notice. Placeholders: {username}, {server_name}, {server_id}, {suspension_date}, {termination_date}, {panel_url}.')
+                    ->field('textarea')
                     ->tab('Email Notifications'),
 
                 ExtensionSettingDefinition::make('warning_mail_enabled', 'toggle', true)
                     ->label('Enable Expiration Warning Emails')
                     ->help('Send advance warning emails to owners before their server expires.')
+                    ->field('toggle')
                     ->tab('Email Notifications')
                     ->frontend(),
                 ExtensionSettingDefinition::make('warning_mail_subject', 'text', '[Warning] Your server {server_name} expires soon')
@@ -66,11 +69,13 @@ class ServerSuspensionProvider extends ExtensionProvider
                 ExtensionSettingDefinition::make('warning_mail_body', 'textarea', $defaultWarningBody)
                     ->label('Warning Email Body')
                     ->help('Body template for expiration warning.')
+                    ->field('textarea')
                     ->tab('Email Notifications'),
 
                 ExtensionSettingDefinition::make('termination_mail_enabled', 'toggle', true)
                     ->label('Enable Termination Emails')
                     ->help('Send email notifications when an expired server is marked as terminated.')
+                    ->field('toggle')
                     ->tab('Email Notifications')
                     ->frontend(),
                 ExtensionSettingDefinition::make('termination_mail_subject', 'text', '[Final Notice] Server Terminated: {server_name}')
@@ -80,6 +85,7 @@ class ServerSuspensionProvider extends ExtensionProvider
                 ExtensionSettingDefinition::make('termination_mail_body', 'textarea', $defaultTerminationBody)
                     ->label('Termination Email Body')
                     ->help('Body template for final termination notice.')
+                    ->field('textarea')
                     ->tab('Email Notifications'),
             ]));
         }
