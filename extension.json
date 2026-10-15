@@ -1,13 +1,13 @@
 {
-    "$schema": "./node_modules/@pterodactyl/sdk/manifest.schema.json",
+    "$schema": "https://raw.githubusercontent.com/pterodactyl/panel/2.0-develop/packages/sdk/manifest.schema.json",
     "id": "server-suspension",
     "name": "Auto Server Suspension",
     "version": "2.0.0",
     "description": "Automated server expiration scheduler with custom suspension dates, owner email notifications, and grace-period termination.",
     "author": "Azion",
     "requires": {
-        "panel": "^2.0.0-dev",
-        "sdk": "^2.0.0-beta.3",
+        "panel": "^2.0.0-beta.1",
+        "sdk": "^2.0.0-beta.6",
         "php": "^8.3"
     },
     "provider": "ServerSuspension\\ServerSuspensionProvider",
@@ -23,9 +23,12 @@
                 "path": "server-suspension",
                 "nav": {
                     "label": "Suspensions",
-                    "order": 55
+                    "order": 55,
+                    "icon": "shield-alert"
                 }
             }
-        ]
+        ],
+        "mode": "native",
+        "prefix": "ssusp"
     }
 }
