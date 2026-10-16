@@ -13,9 +13,9 @@ const SHARED_RUNTIME_MODULES = [
     '@pterodactyl/sdk/theme',
 ];
 
-/** Ensures entry CSS loads before setup runs */
+/** Ensures entry CSS loads before setup runs, matching exact URL so multiple extensions never conflict */
 const extensionStylesPlugin = () => ({
-    name: 'ssusp-extension-styles',
+    name: 'ser-extension-styles',
     enforce: 'post',
     generateBundle(_options, bundle) {
         const cssFiles = Object.keys(bundle).filter((file) => file.endsWith('.css'));
@@ -23,16 +23,16 @@ const extensionStylesPlugin = () => ({
 
         for (const chunk of Object.values(bundle)) {
             if (chunk.type !== 'chunk' || !chunk.isEntry) continue;
-            const prelude = `await Promise.all(${JSON.stringify(cssFiles)}.map(file => new Promise((resolve, reject) => {
-    const existing = document.querySelector(\`link[href*="\${file}"]\`);
-    if (existing) return resolve();
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = new URL(file, import.meta.url).href;
-    link.onload = () => resolve();
-    link.onerror = () => { link.remove(); reject(new Error('Unable to load extension stylesheet: ' + file)); };
-    document.head.append(link);
-})));\n`;
+            const prelude = 'await Promise.all(' + JSON.stringify(cssFiles) + '.map(file => new Promise((resolve, reject) => {' +
+                'const href = new URL(file, import.meta.url).href;' +
+                'if (document.querySelector(\'link[href="\' + href + \'"]\')) return resolve();' +
+                'const link = document.createElement(\'link\');' +
+                'link.rel = \'stylesheet\';' +
+                'link.href = href;' +
+                'link.onload = () => resolve();' +
+                'link.onerror = () => { link.remove(); reject(new Error(\'Unable to load extension stylesheet: \' + file)); };' +
+                'document.head.append(link);' +
+            '})));\n';
             chunk.code = prelude + chunk.code;
         }
     },
@@ -57,7 +57,7 @@ export default defineConfig({
                 format: 'es',
                 entryFileNames: 'client.js',
                 chunkFileNames: 'chunk.[name].[hash].js',
-                assetFileNames: (assetInfo) => (assetInfo.name && assetInfo.name.endsWith('.css') ? 'client.css' : '[name].[hash][extname]'),
+                assetFileNames: (assetInfo) => (assetInfo.name && assetInfo.name.endsWith('.css') ? 'server-suspension.css' : '[name].[hash][extname]'),
             },
         },
     },

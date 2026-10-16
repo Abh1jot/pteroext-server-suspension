@@ -1,13 +1,4 @@
-await Promise.all(["client.css"].map(file => new Promise((resolve, reject) => {
-    const existing = document.querySelector(`link[href*="${file}"]`);
-    if (existing) return resolve();
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = new URL(file, import.meta.url).href;
-    link.onload = () => resolve();
-    link.onerror = () => { link.remove(); reject(new Error('Unable to load extension stylesheet: ' + file)); };
-    document.head.append(link);
-})));
+await Promise.all(["server-suspension.css"].map(file => new Promise((resolve, reject) => {const href = new URL(file, import.meta.url).href;if (document.querySelector('link[href="' + href + '"]')) return resolve();const link = document.createElement('link');link.rel = 'stylesheet';link.href = href;link.onload = () => resolve();link.onerror = () => { link.remove(); reject(new Error('Unable to load extension stylesheet: ' + file)); };document.head.append(link);})));
 import { useCurrentServerRequired as g, definePterodactylExtension as L } from "@pterodactyl/sdk";
 import { jsxs as o, jsx as r } from "react/jsx-runtime";
 import { useState as $, useEffect as w } from "react";
