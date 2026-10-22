@@ -4,12 +4,18 @@
 
 .pe-container {
     width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
-    padding-top: 24px;
-    padding-bottom: 32px;
+    padding: 24px 16px 48px;
     font-family: inherit;
     color: var(--foreground, #f8fafc);
     box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+    .pe-container {
+        padding: 28px 24px 48px;
+    }
 }
 
 .pe-container *, .pe-container *::before, .pe-container *::after {
