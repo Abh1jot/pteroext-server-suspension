@@ -595,7 +595,7 @@
     position: relative;
     width: 100%;
     max-width: 560px;
-    background: var(--card, #1e293b);
+    background: var(--card, rgba(30, 41, 59, 0.95));
     border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
     border-radius: 12px;
     padding: 24px;
