@@ -40,49 +40,49 @@ class ServerSuspensionProvider extends ExtensionProvider
 
         if (class_exists(ExtensionSettingsDefinition::class) && class_exists(ExtensionSettingDefinition::class)) {
             $this->registerSettings(new ExtensionSettingsDefinition($this->settings(), [
-                ExtensionSettingDefinition::make('mail_notifications_enabled', 'toggle', true)
+                ExtensionSettingDefinition::make('mail_notifications_enabled', 'mail_notifications_enabled', true)
                     ->label('Enable Automated Suspension Emails')
                     ->help('Send automated email alerts to server owners when their server is suspended.')
                     ->field('toggle')
                     ->tab('Email Notifications')
                     ->frontend(),
-                ExtensionSettingDefinition::make('mail_subject', 'text', '[Notice] Server Suspended: {server_name}')
+                ExtensionSettingDefinition::make('mail_subject', 'mail_subject', '[Notice] Server Suspended: {server_name}')
                     ->label('Suspension Email Subject')
                     ->help('Subject line for suspension notice. Placeholders: {server_name}, {username}, {server_id}.')
                     ->tab('Email Notifications'),
-                ExtensionSettingDefinition::make('mail_body', 'textarea', $defaultSuspensionBody)
+                ExtensionSettingDefinition::make('mail_body', 'mail_body', $defaultSuspensionBody)
                     ->label('Suspension Email Body')
                     ->help('Body template for suspension notice. Placeholders: {username}, {server_name}, {server_id}, {suspension_date}, {termination_date}, {panel_url}.')
                     ->field('textarea')
                     ->tab('Email Notifications'),
 
-                ExtensionSettingDefinition::make('warning_mail_enabled', 'toggle', true)
+                ExtensionSettingDefinition::make('warning_mail_enabled', 'warning_mail_enabled', true)
                     ->label('Enable Expiration Warning Emails')
                     ->help('Send advance warning emails to owners before their server expires.')
                     ->field('toggle')
                     ->tab('Email Notifications')
                     ->frontend(),
-                ExtensionSettingDefinition::make('warning_mail_subject', 'text', '[Warning] Your server {server_name} expires soon')
+                ExtensionSettingDefinition::make('warning_mail_subject', 'warning_mail_subject', '[Warning] Your server {server_name} expires soon')
                     ->label('Warning Email Subject')
                     ->help('Subject line for expiration warning. Placeholders: {server_name}, {username}, {server_id}, {suspension_date}.')
                     ->tab('Email Notifications'),
-                ExtensionSettingDefinition::make('warning_mail_body', 'textarea', $defaultWarningBody)
+                ExtensionSettingDefinition::make('warning_mail_body', 'warning_mail_body', $defaultWarningBody)
                     ->label('Warning Email Body')
                     ->help('Body template for expiration warning.')
                     ->field('textarea')
                     ->tab('Email Notifications'),
 
-                ExtensionSettingDefinition::make('termination_mail_enabled', 'toggle', true)
+                ExtensionSettingDefinition::make('termination_mail_enabled', 'termination_mail_enabled', true)
                     ->label('Enable Termination Emails')
                     ->help('Send email notifications when an expired server is marked as terminated.')
                     ->field('toggle')
                     ->tab('Email Notifications')
                     ->frontend(),
-                ExtensionSettingDefinition::make('termination_mail_subject', 'text', '[Final Notice] Server Terminated: {server_name}')
+                ExtensionSettingDefinition::make('termination_mail_subject', 'termination_mail_subject', '[Final Notice] Server Terminated: {server_name}')
                     ->label('Termination Email Subject')
                     ->help('Subject line for final termination notice.')
                     ->tab('Email Notifications'),
-                ExtensionSettingDefinition::make('termination_mail_body', 'textarea', $defaultTerminationBody)
+                ExtensionSettingDefinition::make('termination_mail_body', 'termination_mail_body', $defaultTerminationBody)
                     ->label('Termination Email Body')
                     ->help('Body template for final termination notice.')
                     ->field('textarea')
